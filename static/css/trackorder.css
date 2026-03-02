@@ -1,0 +1,168 @@
+/* ===============================
+   ORDER CARD (Updated Structure)
+=================================*/
+
+.order-card {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid #edf2ef;
+    padding: 35px;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+}
+
+/* Order Header */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #edf2ef;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.order-id {
+    font-weight: 700;
+    color: var(--primary-green);
+}
+
+.order-meta {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-delivered { 
+    background: rgba(134, 201, 59, 0.15); 
+    color: #4e7a1a; 
+}
+
+.status-pending { 
+    background: rgba(237, 221, 94, 0.2); 
+    color: #8a7d1a; 
+}
+
+/* Order Items */
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.product-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: #f9fbf9;
+}
+
+.item-details h6 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--primary-green);
+}
+
+.item-details p {
+    margin: 2px 0 0 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Order Footer */
+.order-footer {
+    border-top: 1px solid #edf2ef;
+    margin-top: 20px;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.order-total {
+    font-weight: 700;
+    color: var(--primary-green);
+}
+
+/* Return Button */
+.btn-return {
+    border: 1.5px solid var(--primary-green);
+    color: var(--primary-green);
+    background: transparent;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.btn-return:hover {
+    background: var(--primary-green);
+    color: var(--white);
+}
+
+    /* Modal / Pop-up Styling */
+    .modal-content {
+        border-radius: 25px;
+        border: none;
+        padding: 20px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .return-form label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        color: var(--primary-green);
+    }
+
+    .file-upload-wrapper {
+        border: 2px dashed #edf2ef;
+        padding: 20px;
+        text-align: center;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .file-upload-wrapper:hover {
+        background: #f9fbf9;
+        border-color: var(--light-green);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

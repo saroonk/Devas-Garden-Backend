@@ -1,0 +1,627 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Deva's Garden</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Products Page CSS -->
+    <link rel="stylesheet" href="{% static 'css/products.css' %}">
+</head>
+
+<body>
+
+    <!-- Top Banner -->
+    <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer (slides in from right) -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <!-- Drawer Header -->
+                <div class="mob-nav-drawer-header">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Links -->
+                <ul class="mob-nav-links">
+                    <li><a href="#" class="mob-nav-link ">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <a href="#">🌿 Indoor Plants</a>
+                            <a href="#">🌳 Fruit Trees</a>
+                            <a href="#">🌸 Flowering Plants</a>
+                            <a href="#">🪴 Succulents & Cacti</a>
+                            <a href="#">🌱 Medicinal Plants</a>
+                            <a href="#">🪣 Gardening Supplies</a>
+                        </div>
+                    </li>
+                    <li><a href="products.html" class="mob-nav-link active">Products</a></li>
+                    <li><a href="blog.html" class="mob-nav-link">Blog</a></li>
+                    <li><a href="#" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+
+                <!-- Track Order Button -->
+                <div class="mob-nav-footer">
+                                        {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track w-100">Track Your Order</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand me-4" href="#">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <!-- Mobile Icons & Hamburger -->
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <div class="position-relative me-3">
+                        <button class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </button>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+                    </div>
+                    <!-- Custom hamburger — opens right drawer -->
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link " href="#">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link active" href="products.html">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Desktop right icons -->
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn"><i class="bi bi-bag"></i></a>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track">Track Your Order</button>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="#" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+
+
+
+
+
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+
+    <!-- Page Header -->
+    <section class="products-page-header">
+        <div class="container">
+            <h1 class="products-page-title">Our Products</h1>
+            <p class="products-page-desc">
+                Experience the tangy zest and vibrant flavors of our citrus collection. From <a href="#">juicy
+                    oranges</a> to zesty lemons, our <a href="#">citrus fruits</a> are bursting with freshness and
+                nutritional goodness. Explore our selection and add a burst of sunshine to your day.
+            </p>
+        </div>
+    </section>
+
+    <section class="products-filter-bar d-none d-md-block">
+        <div class="container">
+            <div class="filter-bar-inner d-flex align-items-center justify-content-between">
+                <!-- Left: Filter Dropdowns -->
+                <div class="filter-left d-flex align-items-center gap-4">
+                    <span class="filter-label">Filter:</span>
+
+                    <!-- Availability Dropdown -->
+                    <div class="filter-dropdown">
+                        <button class="filter-dropdown-btn" id="availabilityBtn">
+                            Availability <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-menu" id="availabilityMenu">
+                            <label class="filter-check-item">
+                                <input type="checkbox" value="in-stock"> In Stock
+                            </label>
+                            <label class="filter-check-item">
+                                <input type="checkbox" value="out-of-stock"> Out Of Stock
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Price Dropdown -->
+                    <div class="filter-dropdown">
+                        <button class="filter-dropdown-btn" id="priceBtn">
+                            Price <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-menu" id="priceMenu">
+                            <label class="filter-check-item">
+                                <input type="checkbox" value="0-500"> RS 0 – RS 500
+                            </label>
+                            <label class="filter-check-item">
+                                <input type="checkbox" value="500-1000"> RS 500 – RS 1,000
+                            </label>
+                            <label class="filter-check-item">
+                                <input type="checkbox" value="1000+"> RS 1,000+
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Sort + Count -->
+                <div class="filter-right d-flex align-items-center gap-3">
+                    <div class="sort-group d-flex align-items-center gap-2">
+                        <span class="sort-label">Sort by:</span>
+                        <select class="sort-select">
+                            <option value="best-selling">Best selling</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="newest">Newest</option>
+                        </select>
+                    </div>
+                    <span class="products-count">23 products</span>
+                </div>
+                <!-- <button type="submit" class="btn btn-dark btn-md">
+    Apply Filters
+</button> -->
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ====== MOBILE FILTER BAR (Shows filter button + count) ====== -->
+    <section class="products-filter-bar-mobile d-md-none">
+        <div class="container">
+            <div class="mobile-filter-bar d-flex align-items-center justify-content-between">
+                <button class="mobile-filter-btn" id="mobileFilterBtn">
+                    <i class="bi bi-sliders"></i> Filter and sort
+                </button>
+                <span class="products-count">23 products</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== MOBILE FILTER DRAWER ====== -->
+    <div class="mobile-filter-overlay" id="mobileFilterOverlay"></div>
+    <div class="mobile-filter-drawer" id="mobileFilterDrawer">
+        <div class="drawer-header">
+            <div>
+                <p class="drawer-title">Filter and sort</p>
+                <p class="drawer-count">23 products</p>
+            </div>
+            <button class="drawer-close-btn" id="drawerCloseBtn">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="drawer-body">
+            <!-- Availability -->
+            <div class="drawer-section">
+                <button class="drawer-section-btn" data-target="drawerAvailability">
+                    Availability <i class="bi bi-chevron-down"></i>
+                </button>
+                <div class="drawer-section-content" id="drawerAvailability">
+                    <label class="filter-check-item">
+                        <input type="checkbox" value="in-stock"> In Stock
+                    </label>
+                    <label class="filter-check-item">
+                        <input type="checkbox" value="out-of-stock"> Out Of Stock
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price -->
+            <div class="drawer-section">
+                <button class="drawer-section-btn" data-target="drawerPrice">
+                    Price <i class="bi bi-chevron-down"></i>
+                </button>
+                <div class="drawer-section-content" id="drawerPrice">
+                    <label class="filter-check-item">
+                        <input type="checkbox" value="0-500"> RS 0 – RS 500
+                    </label>
+                    <label class="filter-check-item">
+                        <input type="checkbox" value="500-1000"> RS 500 – RS 1,000
+                    </label>
+                    <label class="filter-check-item">
+                        <input type="checkbox" value="1000+"> RS 1,000+
+                    </label>
+                </div>
+            </div>
+
+            <!-- Sort By -->
+            <div class="drawer-section">
+                <div class="drawer-sort-row">
+                    <span class="drawer-sort-label">Sort by:</span>
+                    <select class="sort-select drawer-sort-select">
+                        <option value="best-selling">Best selling</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-footer">
+            <button class="drawer-remove-btn" id="drawerRemoveAll">Remove all</button>
+            <button class="drawer-apply-btn" id="drawerApply">Apply</button>
+        </div>
+    </div>
+
+
+
+
+
+    <section class="products-grid-section py-4">
+        <div class="container">
+            <div class="row g-md-4 g-3">
+
+                {% for product in products %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">{{ product.name }}</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS {{ product.price }}</span>
+                                <span class="old-price">RS {{ product.original_price }}</span>
+                            </div>
+                            <a data-product-id="{{ product.id }}" class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none">Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                
+            </div>
+
+
+
+            
+        </div><!-- /.container -->
+    </section>
+
+
+
+
+<div class="container">
+         <div class="pagination-wrapper">
+                <nav aria-label="Blog pagination">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+</div>
+
+
+
+
+
+
+    <div class="footer-wrapper">
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <!-- Decorative images -->
+                    <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
+                    <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <!-- Brand Column -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <!-- Customer Care -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <!-- Our Policies -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Refund Policy</a></li>
+                            <li><a href="#">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact Us -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS & Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}" defer></script>    <!-- Products JS (inline) -->
+    <script>
+
+
+
+  
+const addtocartbtn = Array.from(document.getElementsByClassName('addtocartbtn'));
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+addtocartbtn.forEach(el => {
+    el.addEventListener('click', function () {
+
+        const productId = this.dataset.productId;
+        const csrfToken = getCookie('csrftoken');
+
+        fetch("{% url 'add_to_cart' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": csrfToken
+            },
+            body: `product_id=${productId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.status === "success") {
+
+                // Update cart badge
+                document.querySelectorAll('.cart-badge').forEach(el => {
+                    el.textContent = data.cart_count;
+                });
+
+                // Button animation
+                this.textContent = "Added";
+                this.style.backgroundColor = "#1d2d03ff";
+
+                setTimeout(() => {
+                    this.textContent = "Add to cart";
+                    this.style.backgroundColor = "#558903";
+                }, 1500);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+});
+
+
+
+
+
+
+
+        // ---- Desktop filter dropdowns ----
+        document.querySelectorAll('.filter-dropdown-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const menu = this.nextElementSibling;
+                const isOpen = menu.classList.contains('open');
+                // close all
+                document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.remove('open'));
+                document.querySelectorAll('.filter-dropdown-btn').forEach(b => b.classList.remove('active'));
+                if (!isOpen) {
+                    menu.classList.add('open');
+                    this.classList.add('active');
+                }
+            });
+        });
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.remove('open'));
+            document.querySelectorAll('.filter-dropdown-btn').forEach(b => b.classList.remove('active'));
+        });
+
+
+
+        // for form auto submit
+        // document.querySelectorAll(".filter-dropdown-menu input").forEach(checkbox => {
+        //     checkbox.addEventListener("change", () => {
+        //         document.querySelector(".filter-bar-inner form").submit();
+        //     });
+        // });
+
+        // document.querySelectorAll('.filter-check-item input')
+        //     .forEach(input => {
+        //         input.addEventListener('change', () => {
+        //             input.closest('form').submit();
+        //         });
+        //     });
+
+        // ---- Mobile filter drawer ----
+        const mobileFilterBtn = document.getElementById('mobileFilterBtn');
+        const mobileFilterOverlay = document.getElementById('mobileFilterOverlay');
+        const mobileFilterDrawer = document.getElementById('mobileFilterDrawer');
+        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+        const drawerApply = document.getElementById('drawerApply');
+        const drawerRemoveAll = document.getElementById('drawerRemoveAll');
+
+        function openDrawer() {
+            mobileFilterDrawer.classList.add('open');
+            mobileFilterOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            mobileFilterDrawer.classList.remove('open');
+            mobileFilterOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        mobileFilterBtn.addEventListener('click', openDrawer);
+        mobileFilterOverlay.addEventListener('click', closeDrawer);
+        drawerCloseBtn.addEventListener('click', closeDrawer);
+        drawerApply.addEventListener('click', closeDrawer);
+        drawerRemoveAll.addEventListener('click', function () {
+            document.querySelectorAll('#mobileFilterDrawer input[type="checkbox"]').forEach(cb => cb.checked = false);
+        });
+
+        // ---- Drawer accordion sections ----
+        document.querySelectorAll('.drawer-section-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                const content = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                content.classList.toggle('open');
+                icon.classList.toggle('bi-chevron-up');
+                icon.classList.toggle('bi-chevron-down');
+            });
+        });
+    </script>
+</body>
+
+</html>

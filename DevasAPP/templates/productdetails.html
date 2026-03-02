@@ -1,0 +1,707 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deva's Garden - Fruit Tree Specialist</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/productdetails.css' %}">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+</head>
+
+<body>
+
+    <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer (slides in from right) -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <!-- Drawer Header -->
+                <div class="mob-nav-drawer-header">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Links -->
+                <ul class="mob-nav-links">
+                    <li><a href="#" class="mob-nav-link ">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <a href="#">🌿 Indoor Plants</a>
+                            <a href="#">🌳 Fruit Trees</a>
+                            <a href="#">🌸 Flowering Plants</a>
+                            <a href="#">🪴 Succulents & Cacti</a>
+                            <a href="#">🌱 Medicinal Plants</a>
+                            <a href="#">🪣 Gardening Supplies</a>
+                        </div>
+                    </li>
+                    <li><a href="{% url 'products' %}" class="mob-nav-link">Products</a></li>
+                    <li><a href="{% url 'bloglisting' %}" class="mob-nav-link">Blog</a></li>
+                    <li><a href="{% url 'contactus' %}" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+
+                <!-- Track Order Button -->
+                <div class="mob-nav-footer">
+                                        {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track w-100">Track Your Order</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand me-4" href="#">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <!-- Mobile Icons & Hamburger -->
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <div class="position-relative me-3">
+                        <button class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    <!-- Custom hamburger — opens right drawer -->
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link " href="#">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link active" href="{% url 'products' %}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'bloglisting' %}">Blog</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contactus' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Desktop right icons -->
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <button class="nav-icon-btn"><i class="bi bi-bag"></i></button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track">Track Your Order</button>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="#" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+
+
+
+
+    <!-- Product Details Content -->
+    <main class="product-details-page py-md-3 my-md-3 py-3 my-3">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Litchi (Air Layered)- Fruit Plants & Tree
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row g-5">
+                <div class="col-lg-5">
+                    <div class="product-gallery">
+                        <div class="main-image-container mb-3">
+                            <img id="mainProductImage" src="https://picsum.photos/id/10/800/800" alt="Main Product"
+                                class="main-img w-100">
+                        </div>
+                        <div class="thumbnail-slider-wrapper position-relative px-4">
+                            <div class="owl-carousel thumbnail-slider">
+                                <div class="item"><img src="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}" alt="Thumb 1"
+                                        class="thumb-img active" data-large="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}"></div>
+                                <div class="item"><img src="https://picsum.photos/id/11/400/400" alt="Thumb 2"
+                                        class="thumb-img" data-large="https://picsum.photos/id/11/400/400"></div>
+                                <div class="item"><img src="https://picsum.photos/id/12/400/400" alt="Thumb 3"
+                                        class="thumb-img" data-large="https://picsum.photos/id/12/400/400"></div>
+                                <div class="item"><img src="https://picsum.photos/id/13/400/400" alt="Thumb 4"
+                                        class="thumb-img" data-large="https://picsum.photos/id/13/800/800"></div>
+                                <div class="item"><img src="https://picsum.photos/id/14/400/400" alt="Thumb 5"
+                                        class="thumb-img" data-large="https://picsum.photos/id/14/800/800"></div>
+                            </div>
+                            <!-- Thumb Slider Nav -->
+                            <button class="thumb-prev"><i class="bi bi-chevron-left"></i></button>
+                            <button class="thumb-next"><i class="bi bi-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Info Column -->
+                <div class="col-lg-7">
+                    <div class="product-info-panel">
+                        <h1 class="product-title mb-3">Litchi (Air Layered)- Fruit Plants & Tree</h1>
+
+                        <div class="rating-reviews d-flex align-items-center gap-3 mb-4">
+                            <div class="stars text-warning">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                            </div>
+                            <span class="review-count">288 reviews</span>
+                            <span class="divider">|</span>
+                            <span class="product-size">100ml</span>
+                        </div>
+
+                        <h2 class="product-price mb-4">$40.99</h2>
+
+                        <div class="product-description mb-4">
+                            <div id="shortDesc" class="desc-content">
+                                Vitamin C, also known as ascorbic acid, is a vital nutrient for various bodily
+                                functions, including the maintenance of healthy skin, blood vessels, bones, and
+                                cartilage. It also helps with wound healing and acts as an antioxidant.
+                                <span class="extra-content">
+                                    Our air-layered litchi trees are specially cultivated to ensure early fruiting and
+                                    high yield. These plants are disease-resistant and perfect for home gardens or
+                                    large-scale agriculture. They require minimal maintenance while providing abundant
+                                    fruit.
+                                </span>
+                            </div>
+                            <a href="javascript:void(0)" id="readMoreBtn" class="read-more-link">Read more...</a>
+                        </div>
+
+                        <div class="product-actions d-flex align-items-center gap-3 mb-4">
+                            <div class="quantity-control d-flex align-items-center">
+                                <button class="qty-btn minus"><i class="bi bi-dash"></i></button>
+                                <input type="number" class="qty-input" value="1" min="1">
+                                <button class="qty-btn plus"><i class="bi bi-plus"></i></button>
+                            </div>
+                            <button class="btn btn-add-cart-large flex-grow-1">Add to Cart</button>
+                        </div>
+
+                        <div class="additional-meta d-flex gap-4 mb-5">
+                            <a href="#" class="meta-link"><i class="bi bi-heart me-2"></i> Add to wishlist</a>
+                            <span class="meta-link"><i class="bi bi-check-circle-fill text-success me-2"></i> 30 days
+                                money back guarantee</span>
+                        </div>
+
+                        <!-- Tabbed Content Section -->
+                        <div class="tab-section mb-5">
+                            <div class="tab-headers d-flex gap-md-2 gap-0 p-1 bg-light rounded-pill mb-4">
+                                <button class="tab-link active" data-tab="details">Details</button>
+                                <button class="tab-link" data-tab="packaging">Packaging</button>
+                                <button class="tab-link" data-tab="shipping">Shipping details</button>
+                            </div>
+                            <div class="tab-content">
+                                <!-- Details Tab -->
+                                <div id="details" class="tab-pane active">
+                                    <div class="accordion custom-accordion" id="accordionDetails">
+                                        <div class="accordion-item border-0 border-bottom">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#featDetails">
+                                                    KEY FEATURES
+                                                </button>
+                                            </h2>
+                                            <div id="featDetails" class="accordion-collapse collapse show"
+                                                data-bs-parent="#accordionDetails">
+                                                <div class="accordion-body">
+                                                    Our air-layered litchi trees are specially cultivated to ensure
+                                                    early fruiting and high yield. These plants are disease-resistant.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item border-0 border-bottom">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#ingDetails">
+                                                    INGREDIENTS
+                                                </button>
+                                            </h2>
+                                            <div id="ingDetails" class="accordion-collapse collapse"
+                                                data-bs-parent="#accordionDetails">
+                                                <div class="accordion-body">
+                                                    Pure organic sapling with natural soil nutrients and optimized root
+                                                    structure for transplanting.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item border-0">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#useDetails">
+                                                    HOW TO USE
+                                                </button>
+                                            </h2>
+                                            <div id="useDetails" class="accordion-collapse collapse"
+                                                data-bs-parent="#accordionDetails">
+                                                <div class="accordion-body">
+                                                    Plant in well-drained soil with partial sunlight. Water regularly
+                                                    during the first few months after planting.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Packaging Tab -->
+                                <div id="packaging" class="tab-pane">
+                                    <div class="accordion custom-accordion" id="accordionPackaging">
+                                        <div class="accordion-item border-0 border-bottom">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#featPack">
+                                                    SECURE PACKAGING
+                                                </button>
+                                            </h2>
+                                            <div id="featPack" class="accordion-collapse collapse show"
+                                                data-bs-parent="#accordionPackaging">
+                                                <div class="accordion-body">
+                                                    We use reinforced corrugated boxes and specialized root ball
+                                                    protection to ensure your plant arrives safely.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item border-0 border-bottom">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#ingPack">
+                                                    ECO-FRIENDLY MATERIALS
+                                                </button>
+                                            </h2>
+                                            <div id="ingPack" class="accordion-collapse collapse"
+                                                data-bs-parent="#accordionPackaging">
+                                                <div class="accordion-body">
+                                                    Our packaging is 95% biodegradable, using recycled paper and organic
+                                                    twine instead of plastic when possible.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item border-0">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#usePack">
+                                                    UNBOXING TIPS
+                                                </button>
+                                            </h2>
+                                            <div id="usePack" class="accordion-collapse collapse"
+                                                data-bs-parent="#accordionPackaging">
+                                                <div class="accordion-body">
+                                                    Carefully cut the outer tape, avoid using deep blades to prevent
+                                                    damaging the leaves. Water the plant immediately after unboxing.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Shipping Tab -->
+                                <div id="shipping" class="tab-pane">
+                                    <div class="accordion custom-accordion" id="accordionShipping">
+                                        <div class="accordion-item border-0 border-bottom">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#featShip">
+                                                    EXPRESS DELIVERY
+                                                </button>
+                                            </h2>
+                                            <div id="featShip" class="accordion-collapse collapse show"
+                                                data-bs-parent="#accordionShipping">
+                                                <div class="accordion-body">
+                                                    We offer express shipping to ensure plants spend minimal time in
+                                                    transit, prioritizing their health and vibrancy.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item border-0 border-bottom">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#ingShip">
+                                                    TRACKING SERVICE
+                                                </button>
+                                            </h2>
+                                            <div id="ingShip" class="accordion-collapse collapse"
+                                                data-bs-parent="#accordionShipping">
+                                                <div class="accordion-body">
+                                                    Receive real-time updates and SMS notifications about your delivery
+                                                    status from our warehouse to your doorstep.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item border-0">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#useShip">
+                                                    REPLACEMENT POLICY
+                                                </button>
+                                            </h2>
+                                            <div id="useShip" class="accordion-collapse collapse"
+                                                data-bs-parent="#accordionShipping">
+                                                <div class="accordion-body">
+                                                    If your plant arrives damaged during transit, we provide a
+                                                    hassle-free replacement within 48 hours of delivery.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+
+
+
+
+
+
+    <section class="products-section  ">
+        <div class="container">
+            <!-- Reusable Section Header -->
+            <div class="section-header mb-5">
+                <span class="section-subtitle">Our Products</span>
+                <div class="d-flex align-items-center">
+                    <div class="title-bar"></div>
+                    <h2 class="section-title mb-0">Featured Products</h2>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Product 1 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/10/400/400" alt="Product 1" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/11/400/400" alt="Product 2" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 3 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/12/400/400" alt="Product 3" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 4 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/13/400/400" alt="Product 4" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+    <!-- CTA & Footer Wrapper -->
+    <div class="footer-wrapper">
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white  position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <!-- Decorative images -->
+                    <img src="images/footerimage1.png" alt="" class="cta-bg-img left-bottom">
+                    <img src="images/footerimage2.png" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <!-- Brand Column -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="images/Group6.png" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <!-- Customer Care -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <!-- Our Policies -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Refund Policy</a></li>
+                            <li><a href="#">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact Us -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                    <a href="#" class="privacy-link">privacy policy</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Offer Popup -->
+    <div id="offerPopupOverlay" class="popup-overlay"></div>
+    <div id="offerPopup" class="offer-popup">
+        <button id="closePopup" class="close-popup"><i class="bi bi-x-lg"></i></button>
+        <div class="popup-content">
+            <!-- Background image will be set via CSS or here -->
+            <div class="popup-image-container">
+                <img src="images/plant.jpg" alt="Special Offer" class="popup-bg-img">
+                <div class="popup-form-overlay">
+                    <div class="popup-form-wrapper">
+                        <input type="email" id="popupEmail" class="form-control" placeholder="Enter your email">
+                        <button id="popupSignUp" class="btn btn-signup mt-3">SIGN UP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- <div class="footer-wrapper mt-5 pt-5">
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <img src="footerimage1.png" alt="" class="cta-bg-img left-bottom">
+                    <img src="footerimage2.png" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="Group 6.png" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Refund Policy</a></li>
+                            <li><a href="#">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                    <a href="#" class="privacy-link">privacy policy</a>
+                </div>
+            </div>
+        </footer>
+    </div> -->
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+
+</html>

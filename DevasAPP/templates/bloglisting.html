@@ -1,0 +1,348 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Blog - Deva's Garden</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+</head>
+
+<body>
+
+    <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <div class="mob-nav-drawer-header">
+                    <img src="images/Group6.png" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <ul class="mob-nav-links">
+                    <li><a href="index.html" class="mob-nav-link">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <a href="#">🌿 Indoor Plants</a>
+                            <a href="#">🌳 Fruit Trees</a>
+                            <a href="#">🌸 Flowering Plants</a>
+                            <a href="#">🪴 Succulents & Cacti</a>
+                            <a href="#">🌱 Medicinal Plants</a>
+                            <a href="#">🪣 Gardening Supplies</a>
+                        </div>
+                    </li>
+                    <li><a href="products.html" class="mob-nav-link">Products</a></li>
+                    <li><a href="blog.html" class="mob-nav-link active">Blog</a></li>
+                    <li><a href="#" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+                <div class="mob-nav-footer">
+                                        {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track w-100">Track Your Order</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <a class="navbar-brand me-4" href="index.html">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <div class="position-relative me-3">
+                        <button class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="blog.html">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <button class="nav-icon-btn"><i class="bi bi-bag"></i></button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track">Track Your Order</button>
+                </div>
+            </div>
+
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="#" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <!-- Blog Hero Section -->
+    <section class="p-md-5 p-2">
+        <div class="container blog-hero">
+            <h1>Our Blog</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+
+
+        <div class="container mb-5">
+            <div class="d-flex flex-wrap justify-content-center gap-3 filter-container" data-aos="fade-up">
+                <button class="btn btn-filter active" onclick="filterBlog('all')" >All Stories</button>
+                {% for category in blogcategories %}
+                <button class="btn btn-filter" onclick="filterBlog('{{ category.slug }}')">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+    <!-- Blog Listing Section -->
+    <section class="blog-listing-section">
+        <div class="container">
+            <div class="row g-4">
+                {% for blog in blogs %}
+                <div class="col-lg-4 col-md-6  blog-card-item {{ blog.category.slug }}" data-aos="fade-up">
+                    <a class="blog-card text-decoration-none " href="{% url 'blogdetails' blog.slug %}">
+                        <div class="blog-img-wrapper position-relative">
+                            <img src="{{ blog.main_image.url }}" alt="{{ blog.title }}" class="blog-img w-100">
+                            <span class="blog-badge">{{ blog.category.name }}</span>
+                        </div>
+                        <div class="blog-info mt-3">
+                            <span class="blog-date">{{ blog.uploaded_date }}</span>
+                            <h5 class="blog-title mt-2">{{ blog.title }}</h5>
+                        </div>
+                    </a>
+                </div>
+            
+                {% endfor %}
+
+                
+                
+            </div>
+
+            
+<div class="pagination-wrapper">
+    <nav aria-label="Blog pagination">
+        <ul class="pagination">
+
+            <!-- Previous Button -->
+            <li class="page-item {% if not blogs.has_previous %}disabled{% endif %}">
+                <a class="page-link"
+                   href="{% if blogs.has_previous %}?page={{ blogs.previous_page_number }}{% else %}#{% endif %}"
+                   aria-label="Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            {% for num in blogs.paginator.page_range %}
+                <li class="page-item {% if blogs.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">
+                        {{ num }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            <!-- Next Button -->
+            <li class="page-item {% if not blogs.has_next %}disabled{% endif %}">
+                <a class="page-link"
+                   href="{% if blogs.has_next %}?page={{ blogs.next_page_number }}{% else %}#{% endif %}"
+                   aria-label="Next">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+        </div>
+    </section>
+
+    <!-- CTA & Footer Wrapper -->
+    <div class="footer-wrapper">
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <img src="images/footerimage1.png" alt="" class="cta-bg-img left-bottom">
+                    <img src="images/footerimage2.png" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="images/Group 6.png" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="trackorder.html">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="privacypolicy.html">Privacy Policy</a></li>
+                            <li><a href="returnpolicy.html">Refund Policy</a></li>
+                            <li><a href="#">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+
+    <script>
+        function filterBlog(category) {
+    const cards = document.querySelectorAll('.blog-card-item');
+    const buttons = document.querySelectorAll('.btn-filter');
+
+    // Update active button
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Filter cards
+    cards.forEach(card => {
+        if (category === 'all') {
+            card.style.display = 'block';
+        } else {
+            card.classList.contains(category) 
+                ? card.style.display = 'block' 
+                : card.style.display = 'none';
+        }
+    });
+}
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,991 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deva's Garden - Plant's Specialist</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+</head>
+
+<body>
+
+
+    <!-- <div class="top-banner text-center py-2">
+        <div class="container">
+            <p class="mb-0">Get up to 35% OFF today! <a href="#"
+                    class="text-white text-decoration-underline fw-bold">GET NOW</a></p>
+        </div>
+    </div> -->
+
+
+    <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer (slides in from right) -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <!-- Drawer Header -->
+                <div class="mob-nav-drawer-header">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Links -->
+                <ul class="mob-nav-links">
+                    <li><a href="#" class="mob-nav-link active">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <a href="#">🌿 Indoor Plants</a>
+                            <a href="#">🌳 Fruit Trees</a>
+                            <a href="#">🌸 Flowering Plants</a>
+                            <a href="#">🪴 Succulents & Cacti</a>
+                            <a href="#">🌱 Medicinal Plants</a>
+                            <a href="#">🪣 Gardening Supplies</a>
+                        </div>
+                    </li>
+                    <li><a href="{% url 'products' %}" class="mob-nav-link">Products</a></li>
+                    <li><a href="{% url 'bloglisting' %}" class="mob-nav-link">Blog</a></li>
+                    <li><a href="{% url 'contactus' %}" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+
+                <!-- Track Order Button -->
+                <div class="mob-nav-footer">
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+
+
+                    <a href="{% url 'trackorder' %}" class="btn btn-track w-100">Track Your Order</a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand me-4" href="#">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <!-- Mobile Icons & Hamburger -->
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <div class="position-relative me-3">
+                        <button class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </button>
+                        <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
+                    </div>
+                    <!-- Custom hamburger — opens right drawer -->
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'bloglisting' %}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contactus' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Desktop right icons -->
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn"><i class="bi bi-bag"></i></a>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    
+                    <a href="{% url 'trackorder' %}" class="btn btn-track">Track Your Order</a>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="#" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+        </nav>
+    </div>
+
+
+
+
+
+
+
+    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-container position-relative p-0">
+            <div class="row align-items-center g-0">
+                <!-- Left Content Area -->
+                <div class="col-lg-6 hero-text-col position-relative order-md-1 order-2">
+                    <!-- Pattern Overlay (Limited to left side) -->
+                    <div class="hero-pattern"></div>
+                    <div class="hero-text-area py-5 position-relative">
+                        <h4 class="hero-subtitle">{{ hero.subtitle }}</h4>
+                        <h1 class="hero-title">{{ hero.title }}</h1>
+                        <button class="btn btn-buy-now mt-3">{{ hero.button_text|default:"Buy now" }}</button>
+                    </div>
+                </div>
+                <!-- Right Slider Area -->
+                <div class="col-lg-6 slider-col position-relative p-0 order-md-2 order-1">
+                    <div class="owl-carousel hero-slider">
+                        {% for img in hero.images.all %}
+                        <div class="item">
+                            <img src="{{ img.image.url }}" alt="Image {{ forloop.counter}}" class="slider-img">
+                        </div>
+                        {% endfor %}
+                        <!-- <div class="item">
+                            <img src="https://picsum.photos/id/11/1200/800" alt="Plant Image 2" class="slider-img">
+                        </div>
+                        <div class="item">
+                            <img src="https://picsum.photos/id/12/1200/800" alt="Plant Image 3" class="slider-img">
+                        </div> -->
+                    </div>
+                    <!-- Custom Nav Buttons -->
+                    <div class="slider-nav-btns">
+                        <button class="slider-prev"><i class="bi bi-chevron-left"></i></button>
+                        <button class="slider-next"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="features-section py-3">
+        <div class="container">
+            <div class="row  align-items-center  text-start  ">
+
+                <!-- Feature 1 -->
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div
+                        class="feature-card d-flex align-items-center gap-3 justify-content-md-center justify-content-start">
+                        <div class="feature-icon">
+                            <i class="bi bi-flower1"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h5>Damage Replacement</h5>
+                            <p class="mb-0">Damaged plant? We’ll replace it free of cost.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div
+                        class="feature-card d-flex align-items-center gap-3 justify-content-md-center justify-content-start">
+                        <div class="feature-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h5>Express Delivery</h5>
+                            <p class="mb-0">Secure packaging & delivery within 4–5 days.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="col-md-4">
+                    <div
+                        class="feature-card d-flex align-items-center gap-3 justify-content-md-center justify-content-start">
+                        <div class="feature-icon">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h5>Customer Support</h5>
+                            <p class="mb-0">24/7 Customer Support</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+    <!-- <section class="offer py-5">
+        <div class="container py-3 px-md-5 ">
+            <div class="row">
+                <div class="col-12 offer-img">
+                    <img src="images/offer.png" alt="" class="img-fluid">
+                </div>
+           
+            </div>
+        </div>
+    </section> -->
+
+    <section class="offer py-md-5 py-2">
+        <div class="container py-3 px-md-5">
+            <div class="row">
+                <div class="col-12">
+                    
+            
+                        <!-- {% if offer %}
+                            <div class="offer-banner d-md-block d-none"
+                                style="background-image: url('{{ offer.desktop_image.url }}');">
+                            </div>
+
+                            <div class="offer-banner d-md-none d-block"
+                                style="background-image: url('{{ offer.mobile_image.url }}');">
+                            </div>
+                        {% endif %}
+                    -->
+
+
+                    {% if offer %}
+<div class="offer-banner">
+    <picture>
+        <!-- Mobile -->
+        <source media="(max-width: 768px)" srcset="{{ offer.mobile_image.url }}">
+        
+        <!-- Desktop -->
+        <img src="{{ offer.desktop_image.url }}" 
+             alt="Offer Banner" 
+             class="img-fluid w-100">
+    </picture>
+</div>
+{% endif %}
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+
+    <!-- Products Section -->
+    <section class="products-section py-5">
+        <div class="container">
+            <!-- Reusable Section Header -->
+            <div class="section-header mb-5">
+                <span class="section-subtitle">CUSTOMER CHOICE</span>
+                <div class="d-flex align-items-center">
+                    <div class="title-bar"></div>
+                    <h2 class="section-title mb-0">Check Our Products</h2>
+                </div>
+            </div>
+
+            <div class="row g-md-4 g-3">
+                <!-- Product 1 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="{% url 'productdetails' %}">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/10/400/400" alt="Product 1" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/11/400/400" alt="Product 2" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 3 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/12/400/400" alt="Product 3" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 4 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/13/400/400" alt="Product 4" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 5 (Repeat for 8) -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/14/400/400" alt="Product 5" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 6 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/15/400/400" alt="Product 6" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 7 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/16/400/400" alt="Product 7" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 8 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/17/400/400" alt="Product 8" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+    <section class="about-section py-md-5 py-1 my-md-5 my-1">
+        <div class="container">
+            <div class="row align-items-center g-md-5">
+                <!-- Left Image Area -->
+                <div class="col-lg-6">
+                    <div class="about-img-wrapper">
+                        <img src="{% static 'images/about.png' %}" alt="Farmer in garden" class="about-img w-100">
+                    </div>
+                </div>
+                <!-- Right Content Area -->
+                <div class="col-lg-6 ps-md-5 ps-3">
+                    <div class="section-header about-header mb-4">
+                        <span class="section-subtitle">ABOUT US</span>
+                        <div class="d-flex align-items-center">
+                            <!-- <div class="title-bar"></div> -->
+                            <h2 class="section-title mb-0">We’re Best Agriculture & Organic Farms</h2>
+                        </div>
+                    </div>
+                    <p class="about-text mb-4 ">
+                        There are many variations of passages of Lorem Ipsum available, but the majority
+                        have suffered alteration in some form, by injected humour, or randomised words which
+                        don't look even.
+                    </p>
+                    <div class="row about-list g-3">
+                        <div class="col-6">
+                            <div class="about-list-item d-flex align-items-center">
+                                <i class="bi bi-check2-circle me-2"></i>
+                                <span>Garlic Farming</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="about-list-item d-flex align-items-center">
+                                <i class="bi bi-check2-circle me-2"></i>
+                                <span>Garlic Farming</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="about-list-item d-flex align-items-center">
+                                <i class="bi bi-check2-circle me-2"></i>
+                                <span>Lavender Farming</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="about-list-item d-flex align-items-center">
+                                <i class="bi bi-check2-circle me-2"></i>
+                                <span>Lavender Farming</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="about-list-item d-flex align-items-center">
+                                <i class="bi bi-check2-circle me-2"></i>
+                                <span>Gourmet Mushrooms</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="about-list-item d-flex align-items-center">
+                                <i class="bi bi-check2-circle me-2"></i>
+                                <span>Gourmet Mushrooms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+
+
+
+    <section class="products-banner mb-3 ">
+        <div class="container-fluid text-center">
+
+
+            <span class="badge-title">OUR PRODUCTS</span>
+            <h2 class="banner-title">Products Delivered to Home</h2>
+        </div>
+    </section>
+
+
+    <section class="products-section py-5">
+        <div class="container">
+            <!-- Reusable Section Header -->
+
+
+            <div class="row g-4">
+                <!-- Product 1 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/10/400/400" alt="Product 1" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/11/400/400" alt="Product 2" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 3 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/12/400/400" alt="Product 3" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 4 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/13/400/400" alt="Product 4" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 5 (Repeat for 8) -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/14/400/400" alt="Product 5" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 6 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/15/400/400" alt="Product 6" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 7 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/16/400/400" alt="Product 7" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product 8 -->
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="productdetails.html">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="https://picsum.photos/id/17/400/400" alt="Product 8" class="product-img">
+                            <span class="product-badge">Terrace/Garden friendly</span>
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS 245.00</span>
+                                <span class="old-price">RS 245.00</span>
+                            </div>
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section py-md-5 py-1 my-md-5 my-1">
+        <div class="container py-2">
+            <div class="row align-items-center">
+                <div class="col-lg-4">
+                    <div class="section-header testimonial-header">
+                        <span class="section-subtitle">TESTIMONIALS</span>
+                        <h2 class="section-title">What our clients say about us</h2>
+                    </div>
+                </div>
+                <div class="col-lg-8 ps-lg-5">
+                    <div class="testimonial-slider-container position-relative">
+                        <div class="owl-carousel testimonial-slider">
+                            <!-- Testimonial 1 -->
+
+                            {% for testimonial in test %}
+                            <div class="item">
+                                <div class="testimonial-card">
+                                    <p class="testimonial-text mb-4">
+                                        “{{ testimonial.content }}”
+                                    </p>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="author-info d-flex align-items-center">
+                                    <img src="{% if testimonial.profile_image %}
+                                                {{ testimonial.profile_image.url }}
+                                            {% else %}
+                                                {% static 'images/defaultprofile.jpg' %}
+                                            {% endif %}"
+                                        alt="Profile"                                               class="author-img me-3">
+                                            <div>
+                                                <h6 class="mb-0">{{ testimonial.name }}</h6>
+                                                <small class="text-muted">{{ testimonial.role }}</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- {{ testimonial.rating }} -->
+
+                                        <div class="rating">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= testimonial.rating %}
+                                                <i class="bi bi-star-fill"></i>
+                                                {% else %}
+                                                 <i class="bi bi-star"></i>
+                
+                                                {% endif %}
+                                            {% endfor %}
+                                            <!-- <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p>Testimonial will be updated soon..</p>
+                            {% endfor %}
+
+
+                            <!-- <div class="item">
+                                <div class="testimonial-card">
+                                    <p class="testimonial-text mb-4">
+                                        “Amazing selection of plants! My garden has never looked better. Highly
+                                        recommend Deva's Garden for all your organic needs.”
+                                    </p>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="author-info d-flex align-items-center">
+                                            <img src="https://i.pravatar.cc/100?img=2" alt="Sarah"
+                                                class="author-img me-3">
+                                            <div>
+                                                <h6 class="mb-0">Sarah J.</h6>
+                                                <small class="text-muted">Home Gardener</small>
+                                            </div>
+                                        </div>
+                                        <div class="rating">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <!-- Tagline Section -->
+    <section class="tagline-section py-5 container-fluid">
+        <div class="tagline-wrapper overflow-hidden">
+            <h2 class="tagline-text">Vegetables <span>*</span></h2>
+            <h2 class="tagline-text">Organic <span>*</span></h2>
+            <h2 class="tagline-text">Farming</h2>
+
+
+
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="blog-section py-5 my-5">
+        <div class="container">
+            <div class="section-header mb-5 text-start">
+                <span class="section-subtitle">LATEST BLOG</span>
+                <h2 class="section-title"><a href="{% url 'bloglisting' %}" class="text-decoration-none text-dark">Latest posts & <br>
+                        articles</a></h2>
+            </div>
+            <div class="row g-4">
+               {% for blog in blogs %}
+                <div class="col-lg-4">
+                    <a href="{% url 'blogdetails' blog.slug %}" class="blog-card text-decoration-none ">
+                        <div class="blog-img-wrapper position-relative">
+                            <img src="{{ blog.main_image.url }}" alt="Blog 1" class="blog-img w-100">
+                            <span class="blog-badge">{{ blog.category.name }}</span>
+                        </div>
+                        <div class="blog-info mt-3">
+                            <span class="blog-date">{{ blog.uploaded_date|date:"F d, Y" }}</span>
+                            <h5 class="blog-title mt-2">{{ blog.title }}</h5>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <p>Blogs will be updated soon..</p>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </section>
+
+
+    <!-- CTA & Footer Wrapper -->
+    <div class="footer-wrapper">
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white  position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <!-- Decorative images -->
+                    <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
+                    <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <!-- Brand Column -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <!-- Customer Care -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="contactus.html">Contact Us</a></li>
+                            <li><a href="trackorder.html">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <!-- Our Policies -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="privacypolicy.html">Privacy Policy</a></li>
+                            <li><a href="returnpolicy.html">Refund Policy</a></li>
+                            <li><a href="terms.html">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact Us -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                    <!-- <a href="#" class="privacy-link">privacy policy</a> -->
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Offer Popup -->
+    <div id="offerPopupOverlay" class="popup-overlay"></div>
+
+    
+    <div id="offerPopup" class="offer-popup">
+        <button id="closePopup" class="close-popup"><i class="bi bi-x-lg"></i></button>
+        <div class="popup-content">
+            <!-- Background image will be set via CSS or here -->
+            <div class="popup-image-container">
+                {% if offer.popup_offer_image %}
+                <img src="{{ offer.popup_offer_image.url }}" alt="Special Offer" class="popup-bg-img">
+                {% else %}
+                <img src="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}" alt="Special Offer" class="popup-bg-img">
+                {% endif %}
+                <div class="popup-form-overlay">
+                    <div class="popup-form-wrapper">
+                        <input type="email" id="popupEmail" class="form-control" placeholder="Enter your email">
+                        <button id="popupSignUp" class="btn btn-signup mt-3">SIGN UP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+    <!-- jQuery (Required for Owl Carousel) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS & Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Owl Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+
+</body>
+
+</html>

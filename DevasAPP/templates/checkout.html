@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Deva's Garden</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body>
+
+    <!-- Top Banner -->
+    <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer (slides in from right) -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <!-- Drawer Header -->
+                <div class="mob-nav-drawer-header">
+                    <img src="images/Group6.png" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Links -->
+                <ul class="mob-nav-links">
+                    <li><a href="#" class="mob-nav-link active">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <a href="#">🌿 Indoor Plants</a>
+                            <a href="#">🌳 Fruit Trees</a>
+                            <a href="#">🌸 Flowering Plants</a>
+                            <a href="#">🪴 Succulents & Cacti</a>
+                            <a href="#">🌱 Medicinal Plants</a>
+                            <a href="#">🪣 Gardening Supplies</a>
+                        </div>
+                    </li>
+                    <li><a href="products.html" class="mob-nav-link">Products</a></li>
+                    <li><a href="blog.html" class="mob-nav-link">Blog</a></li>
+                    <li><a href="#" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+
+                <!-- Track Order Button -->
+                <div class="mob-nav-footer">
+                                        {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track w-100">Track Your Order</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand me-4" href="#">
+                    <img src="images/Group6.png" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <!-- Mobile Icons & Hamburger -->
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <div class="position-relative me-3">
+                        <button class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    <!-- Custom hamburger — opens right drawer -->
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Desktop right icons -->
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <button class="nav-icon-btn"><i class="bi bi-bag"></i></button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    <button class="btn btn-track">Track Your Order</button>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="#" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+
+
+
+    <section class="checkout-section">
+        <div class="container">
+
+            <!-- Breadcrumb -->
+            <nav class="checkout-breadcrumb" aria-label="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><i class="bi bi-chevron-right"></i></li>
+                    <li class="active">Information</li>
+                    <li><i class="bi bi-chevron-right"></i></li>
+                    <li>Shipping</li>
+                    <li><i class="bi bi-chevron-right"></i></li>
+                    <li>Payment</li>
+                </ol>
+            </nav>
+
+            <div class="row g-lg-5 g-4">
+
+                <!-- ── LEFT: Forms ── -->
+                <div class="col-lg-7">
+
+                    <!-- ─── Contact Information ─── -->
+                    <div class="checkout-block">
+                        <div class="checkout-block-header">
+                            <h2 class="checkout-block-title">Contact Information</h2>
+                            <p class="checkout-block-sub">Already have an account? <a href="#">Log in</a></p>
+                        </div>
+
+                        <div class="checkout-form-group">
+                            <label class="checkout-label" for="email">Email address</label>
+                            <input type="email" id="email" class="checkout-input" placeholder="you@example.com">
+                        </div>
+
+                        <div class="checkout-form-check">
+                            <input type="checkbox" id="newsCheck" class="checkout-checkbox">
+                            <label for="newsCheck">Keep me updated on news and exclusive offers</label>
+                        </div>
+                    </div>
+
+                    <!-- ─── Delivery / Shipping Address ─── -->
+                    <div class="checkout-block">
+                        <h2 class="checkout-block-title">Delivery Address</h2>
+
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="checkout-label" for="firstName">First name</label>
+                                <input type="text" id="firstName" class="checkout-input" placeholder="First name">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="checkout-label" for="lastName">Last name</label>
+                                <input type="text" id="lastName" class="checkout-input" placeholder="Last name">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="checkout-label" for="address">Address</label>
+                                <input type="text" id="address" class="checkout-input"
+                                    placeholder="House no., Street, Area">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="checkout-label" for="address2">Apartment, suite, etc. <span
+                                        class="optional-tag">(optional)</span></label>
+                                <input type="text" id="address2" class="checkout-input"
+                                    placeholder="Apartment, suite, etc.">
+                            </div>
+
+                            <div class="col-sm-5">
+                                <label class="checkout-label" for="pincode">PIN code</label>
+                                <input type="text" id="pincode" class="checkout-input" placeholder="6-digit PIN">
+                            </div>
+                            <div class="col-sm-7">
+                                <label class="checkout-label" for="city">City</label>
+                                <input type="text" id="city" class="checkout-input" placeholder="City">
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="checkout-label" for="state">State</label>
+                                <select id="state" name="state" class="checkout-input checkout-select">
+                                <!-- <select id="state" class="checkout-input checkout-select"></select> -->
+                                    <option value="">Select state</option>
+                                    <option >Andhra Pradesh</option>
+                                    <option >Delhi</option>
+                                    <option >Gujarat</option>
+                                    <option >Karnataka</option>
+                                    <option >Kerala</option>
+                                    <option >Maharashtra</option>
+                                    <option >Rajasthan</option>
+                                    <option >Tamil Nadu</option>
+                                    <option >Telangana</option>
+                                    <option >Uttar Pradesh</option>
+                                    <option >West Bengal</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="checkout-label" for="phone">Phone</label>
+                                <input type="tel" id="phone" class="checkout-input" placeholder="+91 00000 00000">
+                            </div>
+                        </div>
+
+                        <!-- <div class="checkout-form-check mt-3">
+                            <input type="checkbox" id="saveAddress" class="checkout-checkbox" checked>
+                            <label for="saveAddress">Save this address for next time</label>
+                        </div> -->
+                    </div>
+
+                    <!-- ─── Shipping Method ─── -->
+                    <!-- <div class="checkout-block">
+                        <h2 class="checkout-block-title">Shipping Method</h2>
+
+                        <div class="shipping-option selected" id="shipStandard">
+                            <div class="shipping-option-radio">
+                                <div class="radio-dot"></div>
+                            </div>
+                            <div class="shipping-option-info">
+                                <p class="shipping-option-name">Standard Delivery</p>
+                                <p class="shipping-option-eta">4–5 business days</p>
+                            </div>
+                            <span class="shipping-option-price free-tag">FREE</span>
+                        </div>
+
+                        <div class="shipping-option" id="shipExpress">
+                            <div class="shipping-option-radio">
+                                <div class="radio-dot"></div>
+                            </div>
+                            <div class="shipping-option-info">
+                                <p class="shipping-option-name">Express Delivery</p>
+                                <p class="shipping-option-eta">1–2 business days</p>
+                            </div>
+                            <span class="shipping-option-price">RS. 99.00</span>
+                        </div>
+                    </div> -->
+
+                    <!-- ─── Payment Method ─── -->
+                    <!-- <div class="checkout-block">
+                        <h2 class="checkout-block-title">Payment Method</h2>
+                        <p class="checkout-block-sub mb-3">All transactions are secure and encrypted.</p>
+
+                        <div class="payment-option selected" id="payCod" data-method="cod">
+                            <div class="payment-option-radio">
+                                <div class="radio-dot"></div>
+                            </div>
+                            <div class="payment-option-info">
+                                <span class="payment-option-label">Cash on Delivery (COD)</span>
+                            </div>
+                            <i class="bi bi-cash-coin payment-icon"></i>
+                        </div>
+
+                        <div class="payment-details-panel" id="codPanel">
+                            <p class="payment-note">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Pay with cash when your order is delivered. Please keep exact change ready.
+                            </p>
+                        </div>
+
+                        <div class="payment-option" id="payUpi" data-method="upi">
+                            <div class="payment-option-radio">
+                                <div class="radio-dot"></div>
+                            </div>
+                            <div class="payment-option-info">
+                                <span class="payment-option-label">UPI</span>
+                            </div>
+                            <div class="payment-logos">
+                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/googlepay.svg"
+                                    alt="GPay" class="payment-logo">
+                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/phonepe.svg"
+                                    alt="PhonePe" class="payment-logo">
+                            </div>
+                        </div>
+
+                        <div class="payment-details-panel d-none" id="upiPanel">
+                            <div class="mb-0">
+                                <label class="checkout-label" for="upiId">UPI ID</label>
+                                <input type="text" id="upiId" class="checkout-input" placeholder="yourname@upi">
+                            </div>
+                        </div>
+
+                        <div class="payment-option" id="payCard" data-method="card">
+                            <div class="payment-option-radio">
+                                <div class="radio-dot"></div>
+                            </div>
+                            <div class="payment-option-info">
+                                <span class="payment-option-label">Credit / Debit Card</span>
+                            </div>
+                            <div class="payment-logos">
+                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/visa.svg" alt="Visa"
+                                    class="payment-logo">
+                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/mastercard.svg"
+                                    alt="Mastercard" class="payment-logo">
+                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/rupay.svg"
+                                    alt="RuPay" class="payment-logo">
+                            </div>
+                        </div>
+
+                        <div class="payment-details-panel d-none" id="cardPanel">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="checkout-label" for="cardNumber">Card number</label>
+                                    <input type="text" id="cardNumber" class="checkout-input"
+                                        placeholder="1234 5678 9012 3456" maxlength="19">
+                                </div>
+                                <div class="col-12">
+                                    <label class="checkout-label" for="cardName">Name on card</label>
+                                    <input type="text" id="cardName" class="checkout-input" placeholder="Full name">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="checkout-label" for="expiry">Expiry date</label>
+                                    <input type="text" id="expiry" class="checkout-input" placeholder="MM / YY"
+                                        maxlength="7">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="checkout-label" for="cvv">Security code (CVV)</label>
+                                    <input type="password" id="cvv" class="checkout-input" placeholder="•••"
+                                        maxlength="4">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> -->
+
+                    <!-- Place Order Button (mobile visible) -->
+                    <button class="btn-place-order w-100 d-lg-none" id="placeOrderMobile">
+                        Place Order · RS. 1,333.00
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+
+                    <!-- Back to cart -->
+                    <a href="cart.html" class="checkout-back-link">
+                        <i class="bi bi-arrow-left me-1"></i> Return to cart
+                    </a>
+
+                </div>
+
+
+
+                <!-- <span id="subtotalAmount">RS. 1,333.00</span>
+<span id="shippingAmount" class="free-tag">FREE</span>
+<p id="grandTotalAmount" class="grand-total-amount">RS. 1,333.00</p> -->
+
+
+                <div class="col-lg-5">
+                    <div class="checkout-summary-card">
+                        <h5 class="checkout-summary-title">Order Summary</h5>
+
+
+                        <div class="checkout-summary-items">
+
+                            <div class="checkout-summary-item">
+                                <div class="summary-item-img-wrap">
+                                    <img src="https://picsum.photos/id/20/300/300" alt="Product"
+                                        class="summary-item-img">
+                                    <span class="summary-item-qty-badge">2</span>
+                                </div>
+                                <div class="summary-item-info">
+                                    <p class="summary-item-name">LSU PURPLE Fig Tissue Culture Plants "Ficus carica"</p>
+                                    <p class="summary-item-variant">Size: 1 Quart 1–1.5ft</p>
+                                </div>
+                                <p class="summary-item-price">RS. 778.00</p>
+                            </div>
+
+                            <div class="checkout-summary-item">
+                                <div class="summary-item-img-wrap">
+                                    <img src="https://picsum.photos/id/22/300/300" alt="Product"
+                                        class="summary-item-img">
+                                    <span class="summary-item-qty-badge">1</span>
+                                </div>
+                                <div class="summary-item-info">
+                                    <p class="summary-item-name">KINOW MANDARIN (GRAFTED) - Citrus Fruit Plants</p>
+                                    <p class="summary-item-variant">Size: Standard Pot</p>
+                                </div>
+                                <p class="summary-item-price">RS. 245.00</p>
+                            </div>
+
+                            <div class="checkout-summary-item">
+                                <div class="summary-item-img-wrap">
+                                    <img src="https://picsum.photos/id/25/300/300" alt="Product"
+                                        class="summary-item-img">
+                                    <span class="summary-item-qty-badge">1</span>
+                                </div>
+                                <div class="summary-item-info">
+                                    <p class="summary-item-name">GRAPEFRUIT (GRAFTED) - Citrus Fruit Plants & Tree</p>
+                                    <p class="summary-item-variant">Size: 2 Quart 1.5–2ft</p>
+                                </div>
+                                <p class="summary-item-price">RS. 310.00</p>
+                            </div>
+
+                        </div>
+
+
+                        <!-- <div class="checkout-coupon-row">
+                            <input type="text" class="checkout-input coupon-input" placeholder="Discount code"
+                                id="couponInput">
+                            <button class="btn-apply-coupon" id="applyCouponBtn">Apply</button>
+                        </div> -->
+
+                        <div class="checkout-summary-divider"></div>
+
+                        <div class="checkout-total-row">
+                            <span>Subtotal</span>
+                            <span>RS. 1,333.00</span>
+                        </div>
+                        <div class="checkout-total-row">
+                            <span>Shipping</span>
+                            <span class="free-tag">FREE</span>
+                        </div>
+
+                        <div class="checkout-summary-divider"></div>
+
+                        <div class="checkout-grand-total-row">
+                            <div>
+                                <p class="grand-total-label">Total</p>
+                                <p class="grand-total-note">Including all taxes</p>
+                            </div>
+                            <p class="grand-total-amount">RS. 1,333.00</p>
+                        </div>
+
+                        <button class="btn-place-order w-100 d-none d-lg-flex" id="placeOrderDesktop">
+                            Place Order
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+
+                        <p class="checkout-secure-note">
+                            <i class="bi bi-lock-fill me-1"></i> Secured Payment
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <div class="footer-wrapper checkout-footer-wrapper">
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <img src="images/footerimage1.png" alt="" class="cta-bg-img left-bottom">
+                    <img src="images/footerimage2.png" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="images/Group6.png" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Refund Policy</a></li>
+                            <li><a href="#">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+
+        // ── Shipping option toggle ──
+        // document.querySelectorAll('.shipping-option').forEach(opt => {
+        //     opt.addEventListener('click', () => {
+        //         document.querySelectorAll('.shipping-option').forEach(o => o.classList.remove('selected'));
+        //         opt.classList.add('selected');
+
+        //         const isExpress = opt.id === 'shipExpress';
+        //         const shippingRow = document.querySelectorAll('.checkout-total-row')[1].querySelector('span:last-child');
+        //         shippingRow.textContent = isExpress ? 'RS. 99.00' : 'FREE';
+        //         shippingRow.className = isExpress ? '' : 'free-tag';
+        //     });
+        // });
+
+        // document.querySelectorAll('.payment-option').forEach(opt => {
+        //     opt.addEventListener('click', () => {
+        //         document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+        //         document.querySelectorAll('.payment-details-panel').forEach(p => p.classList.add('d-none'));
+        //         opt.classList.add('selected');
+        //         const method = opt.dataset.method;
+        //         const panel = { cod: 'codPanel', upi: 'upiPanel', card: 'cardPanel' }[method];
+        //         if (panel) document.getElementById(panel).classList.remove('d-none');
+        //     });
+        // });
+
+        // ── Coupon ──
+        // document.getElementById('applyCouponBtn').addEventListener('click', () => {
+        //     const code = document.getElementById('couponInput').value.trim();
+        //     if (!code) return;
+        //     alert('Coupon "' + code + '" applied! (demo)');
+        // });
+
+        // ── Place Order ──
+        // ['placeOrderDesktop', 'placeOrderMobile'].forEach(id => {
+        //     const btn = document.getElementById(id);
+        //     if (btn) btn.addEventListener('click', () => {
+        //         alert('Order placed successfully! (demo)');
+        //     });
+        // });
+
+        
+        // const cardInput = document.getElementById('cardNumber');
+        // if (cardInput) {
+        //     cardInput.addEventListener('input', e => {
+        //         let val = e.target.value.replace(/\D/g, '').substring(0, 16);
+        //         e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
+        //     });
+        // }
+
+        // const expiryInput = document.getElementById('expiry');
+        // if (expiryInput) {
+        //     expiryInput.addEventListener('input', e => {
+        //         let val = e.target.value.replace(/\D/g, '').substring(0, 4);
+        //         if (val.length >= 3) val = val.substring(0, 2) + ' / ' + val.substring(2);
+        //         e.target.value = val;
+        //     });
+        // }
+
+
+
+
+        document.getElementById('state').addEventListener('change', function() {
+            const selectedState = this.value;
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '';
+            
+            if (selectedState === 'Maharashtra') {
+                const cities = ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Thane'];
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//         shipping update 
+
+
+//         const stateSelect = document.getElementById("state");
+// const subtotalElement = document.getElementById("subtotalAmount");
+// const shippingElement = document.getElementById("shippingAmount");
+// const totalElement = document.getElementById("grandTotalAmount");
+
+// // Remove "RS." and commas and convert to number
+// function getSubtotalValue() {
+//     return parseFloat(
+//         subtotalElement.innerText.replace("RS.", "").replace(",", "").trim()
+//     );
+// }
+
+// stateSelect.addEventListener("change", function () {
+
+//     let selectedState = stateSelect.value;
+//     let subtotal = getSubtotalValue();
+//     let shipping = 0;
+
+//     if (selectedState === "Kerala") {
+//         shipping = 0;
+//         shippingElement.innerText = "FREE";
+//     } else if (selectedState === "") {
+//         shippingElement.innerText = "--";
+//         totalElement.innerText = "RS. " + subtotal.toFixed(2);
+//         return;
+//     } else {
+//         shipping = 100; // Example shipping charge
+//         shippingElement.innerText = "RS. " + shipping.toFixed(2);
+//     }
+
+//     let grandTotal = subtotal + shipping;
+//     totalElement.innerText = "RS. " + grandTotal.toFixed(2);
+// });
+
+
+
+// def calculate_shipping(state):
+//     if state == "Kerala":
+//         return 0
+//     return 100
+
+
+
+// def create_order(request):
+//     state = request.POST.get("state")
+    
+//     subtotal = calculate_cart_subtotal(request.user)
+//     shipping = calculate_shipping(state)
+    
+//     total = subtotal + shipping
+    
+//     # Save order in DB
+//     Order.objects.create(
+//         user=request.user,
+//         subtotal=subtotal,
+//         shipping=shipping,
+//         total=total,
+//         state=state
+//     )
+
+
+    </script>
+</body>
+
+</html>

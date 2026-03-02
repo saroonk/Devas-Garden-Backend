@@ -1,0 +1,88 @@
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: #f9fbf9;
+        }
+
+
+        /* Contact Section Styles */
+        .contact-section {
+            padding: clamp(50px,4vw,80px) 0;
+             overflow-x: hidden;
+        }
+
+  
+
+        .info-card {
+            background: var(--accent-green);
+            color: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            height: 100%;
+            /* border: 2px solid red; */
+        }
+
+        .icon-box {
+            background: white;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            color: green !important;
+            transition: 0.5s;
+        }
+
+        .icon-box:hover{
+            transform: scale(1.2);
+        }
+
+        .form-control {
+            border: 2px solid #eee;
+            padding: 12px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--light-green);
+            box-shadow: none;
+        }
+
+        .btn-submit {
+            background-color: var(--track-yellow);
+            color: var(--primary-green);
+            font-weight: 600;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--track-yellow-hover);
+            transform: translateY(-2px);
+        }
+
+        .contact-link {
+            color: var(--light-green);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-link:hover {
+            color: var(--white);
+        }
+
+        @media (max-width: 768px) {
+            .info-card {
+                margin-top: 30px;
+                padding: 30px;
+            }
+        }

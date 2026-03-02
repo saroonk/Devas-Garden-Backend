@@ -1,0 +1,126 @@
+
+    .signup-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Using a different nature-themed background for variety */
+        background: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), 
+                    url('https://images.unsplash.com/photo-1466781783364-391e954df43f?auto=format&fit=crop&q=80&w=1600');
+        background-size: cover;
+        background-position: center;
+        padding: 40px 20px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .signup-card {
+        background: var(--white);
+        width: 100%;
+        max-width: 850px; /* Slightly wider than login for the 2-col fields */
+        padding: 50px;
+        border-radius: 30px;
+        box-shadow: 0 20px 60px rgba(26, 67, 46, 0.08);
+        border: 1px solid rgba(26, 67, 46, 0.05);
+    }
+
+    .signup-title {
+        font-family: 'Clash Grotesk', sans-serif;
+        color: var(--primary-green);
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    /* Minimal Input Style */
+    .form-floating > .form-control {
+        border: none;
+        border-bottom: 2px solid #edf2ef;
+        border-radius: 0;
+        padding-left: 0;
+        background: transparent;
+        font-weight: 500;
+    }
+
+    .form-floating > .form-control:focus {
+        box-shadow: none;
+        border-color: var(--light-green);
+    }
+
+    .form-floating > label {
+        padding-left: 0;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .btn-register {
+        background-color: var(--primary-green);
+        color: var(--white);
+        font-weight: 600;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        font-family: 'Clash Grotesk', sans-serif;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .btn-register:hover {
+        background-color: var(--accent-green);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(26, 67, 46, 0.15);
+        color: var(--white);
+    }
+
+    .terms-text {
+        font-size: 0.8rem;
+        color: #777;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .terms-text a {
+        color: var(--accent-green);
+        text-decoration: underline;
+    }
+
+    .login-redirect {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .login-redirect a {
+        color: var(--primary-green);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    /* Small dot decoration */
+    .brand-dot {
+        color: var(--light-green);
+    }
+
+
+
+
+
+
+
+
+
+.log-header{
+    position: relative;
+}
+
+         .login-logo{
+            /* position: absolute;
+            top: 0;
+            left: 50%; */
+        width: 80px;
+        margin-bottom: 10px;    
+     }

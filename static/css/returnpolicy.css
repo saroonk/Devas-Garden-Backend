@@ -1,0 +1,106 @@
+.policy-section {
+        padding: 60px 0 100px;
+        background-color: #ffffff;
+        font-family: "Inter";
+    }
+
+    .policy-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .policy-header h2 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .policy-card {
+        border: 1px solid #edf2ef;
+        padding: 30px;
+        border-radius: 20px;
+        height: 100%;
+        transition: transform 0.3s ease;
+        background: #fff;
+    }
+
+    .policy-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(26, 67, 46, 0.05);
+    }
+
+    .policy-icon {
+        color: var(--light-green);
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .policy-title {
+        font-family: 'Clash Grotesk', sans-serif;
+        color: var(--primary-green);
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .highlight-box {
+        background-color: rgba(134, 201, 59, 0.1);
+        border-left: 4px solid var(--light-green);
+        padding: 25px;
+        border-radius: 0 15px 15px 0;
+        margin-top: 40px;
+    }
+
+    .step-number {
+        font-family: 'Clash Grotesk', sans-serif;
+        font-size: 1.2rem;
+        color: var(--accent-green);
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .step-content{
+         font-family: 'Clash Grotesk', sans-serif;
+        font-size: 1rem;
+        color: var(--accent-green);
+        font-weight: 500;
+        margin-right: 10px;
+
+    }
+
+
+
+
+
+    .policy-icon i {
+        font-size: 2.5rem;
+        color: var(--light-green);
+    }
+    
+    .step-number {
+        font-family: 'Clash Grotesk', sans-serif;
+        font-size: 1.2rem;
+        color: var(--accent-green);
+        font-weight: 700;
+        min-width: 40px; /* Ensures alignment if text wraps */
+        display: inline-block;
+    }
+
+    .policy-card {
+        border: 1px solid #edf2ef;
+        padding: 30px;
+        border-radius: 20px;
+        height: 100%;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+
+    .policy-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--light-green);
+        box-shadow: 0 10px 30px rgba(26, 67, 46, 0.05);
+    }
+
+
+
+    .Disclaimer{
+        font-family: "Inter";
+    }
