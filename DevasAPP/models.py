@@ -175,21 +175,96 @@ class ContactSubmission(models.Model):
 
 
 
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
-    stock = models.PositiveIntegerField()
-    image = models.ImageField(upload_to='products/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+# class Product(models.Model):
+#     name = models.CharField(max_length=255)
+#     description = models.TextField()
+#     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
+#     stock = models.PositiveIntegerField()
+#     image = models.ImageField(upload_to='products/', blank=True, null=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.name
+
+#     def is_available(self, quantity=1):
+#         return self.stock >= quantity
+
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
+    def save(self, *args, **kwargs):
+       
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
-    def is_available(self, quantity=1):
-        return self.stock >= quantity
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="subcategories"
+    )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(blank=True)
+
+    class Meta:
+        unique_together = ('category', 'name')
+
+    def save(self, *args, **kwargs):
+     
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.category.name} → {self.name}"
 
 
+
+class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL,null=True, blank=True)
+    subcategory = models.ForeignKey(
+        SubCategory,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
+    is_featured = models.BooleanField(default=False)  # For homepage featured products
+    # Basic Info
+    title = models.CharField(max_length=255,blank=True)
+    short_description = models.TextField(blank=True)
+
+    # Pricing
+    old_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    new_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # Main Image
+    main_image = models.ImageField(upload_to="products/main/")
+
+ 
+    key_features = models.TextField(blank=True)
+    ingredients = models.TextField(blank=True)
+    how_to_use = models.TextField(blank=True)
+
+
+    zones = models.ManyToManyField('Zone', through='ProductDeliveryCharge')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return self.title
 
 
 
@@ -224,8 +299,93 @@ class CartItem(models.Model):
         unique_together = ('cart', 'product')
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+        return f"{self.quantity} x {self.product.title}"
 
     @property
     def subtotal(self):
-        return self.product.price * self.quantity
+        return self.product.new_price * self.quantity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Zone(models.Model):
+    name = models.CharField(max_length=50)  # Zone A, Zone B
+    description = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+# -------------------------
+# STATE
+# Each state belongs to a Zone
+# -------------------------
+class State(models.Model):
+    name = models.CharField(max_length=100)
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="states")
+
+    def __str__(self):
+        return f"{self.name} ({self.zone.name})"
+
+
+
+
+
+
+
+
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="products/sub/")
+
+    def __str__(self):
+        return f"Image for {self.product.title}"
+
+
+
+# -------------------------
+# PRODUCT DELIVERY CHARGE
+# (Each product can have different delivery charge per zone)
+# -------------------------
+class ProductDeliveryCharge(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
+    charge = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        unique_together = ('product', 'zone')
+
+    def __str__(self):
+        return f"{self.product.title} - {self.zone.name} - ₹{self.charge}"
+
+
+
+
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session_id = models.CharField(max_length=255, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,blank=True, null=True)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return f"{self.user.username}"

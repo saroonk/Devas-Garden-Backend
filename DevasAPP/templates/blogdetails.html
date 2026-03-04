@@ -23,8 +23,7 @@
 
 <body>
 
-    <!-- Top Banner -->
-    <div class="header-sticky-wrapper">
+     <div class="header-sticky-wrapper">
         <div class="top-banner py-2">
             <div class="marquee-wrapper">
                 <div class="marquee-content">
@@ -33,6 +32,7 @@
                 </div>
             </div>
         </div>
+
 
 
         <!-- Mobile Nav Overlay -->
@@ -51,43 +51,62 @@
 
                 <!-- Nav Links -->
                 <ul class="mob-nav-links">
-                    <li><a href="#" class="mob-nav-link ">Home</a></li>
+                    <li><a href="{% url 'index' %}" class="mob-nav-link ">Home</a></li>
                     <li class="mob-cat-item">
                         <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
                             Category
                             <i class="bi bi-chevron-right mob-cat-chevron"></i>
                         </button>
                         <div class="mob-cat-submenu" id="mobCatSubmenu">
-                            <a href="#">🌿 Indoor Plants</a>
-                            <a href="#">🌳 Fruit Trees</a>
-                            <a href="#">🌸 Flowering Plants</a>
-                            <a href="#">🪴 Succulents & Cacti</a>
-                            <a href="#">🌱 Medicinal Plants</a>
-                            <a href="#">🪣 Gardening Supplies</a>
+                            <!-- Nested Sub-category: Indoor Plants -->
+                        {% for category in categories %}
+                            {% if category.subcategories.exists %}
+                            <div class="mob-subcat-item">
+                                <button class="mob-subcat-btn">
+                                    <span>{{ category.name }}</span>
+                                    <i class="bi bi-chevron-right mob-subcat-chevron"></i>
+                                </button>
+                                <div class="mob-subcat-menu">
+                                    {% for subcategory in category.subcategories.all %}
+                                    <a href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a>
+                                    {% endfor %}
+                                    <!-- <a href="#">Money Plants</a> -->
+                                </div>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                                <!-- <a href="#">🌳 Fruit Trees</a>
+                                <a href="#">🌸 Flowering Plants</a>
+                                <a href="#">🪴 Succulents & Cacti</a>
+                                <a href="#">🌱 Medicinal Plants</a>
+                                <a href="#">🪣 Gardening Supplies</a> -->
                         </div>
                     </li>
-                    <li><a href="{% url 'products' %}" class="mob-nav-link">Products</a></li>
+                    <li><a href="{% url 'products' %}" class="mob-nav-link ">Products</a></li>
                     <li><a href="{% url 'bloglisting' %}" class="mob-nav-link active">Blog</a></li>
-                    <li><a href="#" class="mob-nav-link ">Contact Us</a></li>
+                    <li><a href="{% url 'contactus' %}" class="mob-nav-link">Contact Us</a></li>
                 </ul>
 
                 <!-- Track Order Button -->
                 <div class="mob-nav-footer">
-                                        {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
                     {% else %}
                     <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
                     {% endif %}
-                    <button class="btn btn-track w-100">Track Your Order</button>
+
+
+                    <a href="{% url 'trackorder' %}" class="btn btn-track w-100">Track Your Order</a>
                 </div>
             </div>
         </div>
 
         <nav class="navbar navbar-expand-lg">
-
             <div class="container d-flex align-items-center">
                 <!-- Logo -->
-                <a class="navbar-brand me-4" href="#">
+                <a class="navbar-brand me-4" href="{% url 'index' %}">
                     <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
                 </a>
 
@@ -100,7 +119,7 @@
                         <button class="nav-icon-btn">
                             <i class="bi bi-bag"></i>
                         </button>
-                        <span class="cart-badge">0</span>
+                        <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
                     </div>
                     <!-- Custom hamburger — opens right drawer -->
                     <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
@@ -113,7 +132,7 @@
                 <!-- Desktop nav links -->
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link " href="#">Home</a></li>
+                        <li class="nav-item"><a class="nav-link " href="{% url 'index' %}">Home</a></li>
                         <li class="nav-item dropdown dropdown-hover">
                             <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
@@ -121,18 +140,33 @@
                             </a>
                             <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
                                 aria-labelledby="categoryDropdown">
-                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
-                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                            {% for category in categories %}
+
+                                {% if category.subcategories.exists %}
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">
+                                        {{ category.name }} <i class="bi bi-chevron-right submenu-icon"></i>
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        {% for subcategory in category.subcategories.all %}
+                                        <li><a class="dropdown-item" href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a></li>
+                                {% endif %}
+                                <!-- <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
                                 <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
                                 <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
                                 <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
-                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li> -->
+                            {% endfor %}
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link " href="{% url 'products' %}">Products</a></li>
                         <li class="nav-item"><a class="nav-link active" href="{% url 'bloglisting' %}">Blog</a></li>
-
-                        <li class="nav-item"><a class="nav-link " href="#">Contact Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contactus' %}">Contact Us</a></li>
                     </ul>
                 </div>
 
@@ -140,15 +174,17 @@
                 <div class="d-none d-lg-flex align-items-center gap-3">
                     <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
                     <div class="position-relative">
-                        <button class="nav-icon-btn"><i class="bi bi-bag"></i></button>
-                        <span class="cart-badge">0</span>
+                        <a href="{% url 'cart' %}" class="nav-icon-btn"><i class="bi bi-bag"></i></a>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+
                     </div>
                     {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
                     {% else %}
                     <a href="{% url 'login' %}" class="btn btn-track">Login</a>
                     {% endif %}
-                    <button class="btn btn-track">Track Your Order</button>
+                    
+                    <a href="{% url 'trackorder' %}" class="btn btn-track">Track Your Order</a>
                 </div>
             </div>
 
@@ -156,16 +192,15 @@
             <div id="searchPopup" class="search-popup-wrapper">
                 <div class="container h-100">
                     <div class="search-form-container">
-                        <form action="#" class="d-flex">
+                        <form action="{% url 'search' %}" method="GET" class="d-flex">
                             <input type="text" class="form-control"
-                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                                placeholder="Search for plants, trees, gardening tools..."  name="q" aria-label="Search">
                             <button type="submit" class="btn btn-search-submit">
                                 <i class="bi bi-search text-white"></i>
                             </button>
                         </form>
                     </div>
                 </div>
-            </div>
         </nav>
     </div>
 
@@ -282,8 +317,8 @@
                         </button>
                     </div>
                     <!-- Decorative images -->
-                    <img src="images/footerimage1.png" alt="" class="cta-bg-img left-bottom">
-                    <img src="images/footerimage2.png" alt="" class="cta-bg-img right-top">
+                    <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
+                    <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
                 </div>
             </div>
         </section>
@@ -350,7 +385,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
     <!-- Custom JS -->
-    <script src="script.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 
 
 

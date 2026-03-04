@@ -1,0 +1,419 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping and Delivery Policy - Deva's Garden</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Cart CSS -->
+    <link rel="stylesheet" href="{% static 'css/terms.css' %}">
+</head>
+
+<body>
+
+     <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer (slides in from right) -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <!-- Drawer Header -->
+                <div class="mob-nav-drawer-header">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Links -->
+                <ul class="mob-nav-links">
+                    <li><a href="{% url 'index' %}" class="mob-nav-link ">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <!-- Nested Sub-category: Indoor Plants -->
+                        {% for category in categories %}
+                            {% if category.subcategories.exists %}
+                            <div class="mob-subcat-item">
+                                <button class="mob-subcat-btn">
+                                    <span>{{ category.name }}</span>
+                                    <i class="bi bi-chevron-right mob-subcat-chevron"></i>
+                                </button>
+                                <div class="mob-subcat-menu">
+                                    {% for subcategory in category.subcategories.all %}
+                                    <a href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a>
+                                    {% endfor %}
+                                    <!-- <a href="#">Money Plants</a> -->
+                                </div>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                                <!-- <a href="#">🌳 Fruit Trees</a>
+                                <a href="#">🌸 Flowering Plants</a>
+                                <a href="#">🪴 Succulents & Cacti</a>
+                                <a href="#">🌱 Medicinal Plants</a>
+                                <a href="#">🪣 Gardening Supplies</a> -->
+                        </div>
+                    </li>
+                    <li><a href="{% url 'products' %}" class="mob-nav-link ">Products</a></li>
+                    <li><a href="{% url 'bloglisting' %}" class="mob-nav-link">Blog</a></li>
+                    <li><a href="{% url 'contactus' %}" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+
+                <!-- Track Order Button -->
+                <div class="mob-nav-footer">
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+
+
+                    <a href="{% url 'trackorder' %}" class="btn btn-track w-100">Track Your Order</a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand me-4" href="{% url 'index' %}">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <!-- Mobile Icons & Hamburger -->
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <div class="position-relative me-3">
+                        <button class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </button>
+                        <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
+                    </div>
+                    <!-- Custom hamburger — opens right drawer -->
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link " href="{% url 'index' %}">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                            {% for category in categories %}
+
+                                {% if category.subcategories.exists %}
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">
+                                        {{ category.name }} <i class="bi bi-chevron-right submenu-icon"></i>
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        {% for subcategory in category.subcategories.all %}
+                                        <li><a class="dropdown-item" href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a></li>
+                                {% endif %}
+                                <!-- <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li> -->
+                            {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link " href="{% url 'products' %}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'bloglisting' %}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contactus' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Desktop right icons -->
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn"><i class="bi bi-bag"></i></a>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    
+                    <a href="{% url 'trackorder' %}" class="btn btn-track">Track Your Order</a>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="{% url 'search' %}" method="GET" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..."  name="q" aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+        </nav>
+    </div>
+
+
+
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+<section class="terms-section">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            
+            <!-- <div class="col-lg-3">
+                <ul class="terms-nav">
+                    <li class="terms-nav-item"><a href="#introduction" class="active">1. Introduction</a></li>
+                    <li class="terms-nav-item"><a href="#eligibility">2. Eligibility</a></li>
+                    <li class="terms-nav-item"><a href="#purchases">3. Purchases & Payment</a></li>
+                    <li class="terms-nav-item"><a href="#shipping">4. Shipping & Living Goods</a></li>
+                    <li class="terms-nav-item"><a href="#intellectual">5. Intellectual Property</a></li>
+                    <li class="terms-nav-item"><a href="#limitation">6. Limitation of Liability</a></li>
+                </ul>
+            </div> -->
+
+            <div class="col-lg-8">
+                <div class="terms-header">
+                    <span class="last-updated">Effective Date: Feb 26, 2026</span>
+                    <h1 class="policy-display-title mt-2">Shipping and Delivery Policy</h1>
+                    <p class="lead text-muted">Please read these Shipping and Delivery Policy carefully before using Deva's Garden website or services.</p>
+                </div>
+
+                <div class="terms-content-wrapper">
+                    
+                    <section id="introduction">
+                        <h2>1. Introduction</h2>
+                        <p>We ship live plants and take all necessary precautions to ensure they arrive in healthy condition. Plants are typically shipped within [10 to 15 working days] after an order is placed. Once the plant is dispatched,
+                             we will provide you with a tracking ID</p>
+                    </section>
+
+                    <section id="eligibility">
+                        <h2>2. Delivery Instructions</h2>
+                        <p> You are required to collect the plant within 2 days after receiving the tracking ID to avoid damage due to delays. If the plant is not collected within this time, we will not be responsible for any damage that may occur.</p>
+                    </section>
+ 
+                    <section id="purchases">
+                        <h2>3. Customer Responsibilities</h2>
+                        <p>Once the plant is delivered, it is the customer’s responsibility to care for it according to the instructions provided. We are not liable for plant health after delivery unless it is proven that the plant was damaged during transit.</p>
+                        <!-- <div class="legal-box">
+                            <h4 class="fw-bold" style="color: var(--primary-green);">Payment Security</h4>
+                            <p class="mb-0">We use industry-standard encryption for all transactions. Deva's Garden does not store your credit card information on our servers; all payments are processed via secure third-party gateways (Stripe/PayPal).</p>
+                        </div> -->
+                    </section>
+
+                    <section id="shipping">
+                        <h2>4. Tracking and Communication</h2>
+                        <p>We will provide you with the tracking details via the registered Email  .It is your responsibility to track the order and ensure timely collection. If you do not collect the order within the specified time, we cannot be held liable for the condition of the plant</p>
+                        <!-- <ul>
+                            <li>Risk of loss and title for items purchased pass to you upon delivery to the carrier.</li>
+                            <li>You are responsible for providing a correct and safe shipping address.</li>
+                            <li>Live plants are non-returnable for cash refunds (refer to our Replacement Policy).</li>
+                        </ul> -->
+                    </section>
+
+                    <section id="intellectual">
+                        <h2>5. Modification of Terms</h2>
+                        <p>We reserve the right to modify these terms and conditions at any time. Changes will be posted on this page, and your continued use of the website will constitute acceptance of the modified terms.</p>
+                    </section>
+
+                    <section id="limitation">
+                        <h2>6. Contact Information</h2>
+                        <p>If you have any questions or concerns about these terms, please contact us at <a href="mailto:devasgarden321@gmail.com">devasgarden321@gmail.com</a></p>
+                    </section>
+
+                </div>
+
+                <!-- <div class="mt-5 p-5 text-center border-top">
+                    <p class="text-muted">Questions about our Terms?</p>
+                    <a href="mailto:legal@devasgarden.com" class="btn fw-bold px-4 py-2" style="background: var(--primary-green); color: var(--white); border-radius: 10px;">
+                        Email Legal Team
+                    </a>
+                </div> -->
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+        <!-- CTA & Footer Wrapper -->
+    <div class="footer-wrapper">
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white  position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <div class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </div>
+                    <!-- Decorative images -->
+                    <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
+                    <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <!-- Brand Column -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <!-- Customer Care -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <!-- Our Policies -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Refund Policy</a></li>
+                            <li><a href="#">Terms Of Service</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact Us -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled">
+                            <li>569-852-1235</li>
+                            <li>Vitc@.com</li>
+                            <li>Vitc@.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                    <!-- <a href="#" class="privacy-link">privacy policy</a> -->
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- jQuery (Required for Owl Carousel) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS & Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Owl Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+
+
+
+
+    <script>
+    //     window.addEventListener('scroll', () => {
+    //     let current = "";
+    //     const sections = document.querySelectorAll('section[id]');
+    //     sections.forEach(section => {
+    //         const sectionTop = section.offsetTop;
+    //         if (pageYOffset >= sectionTop - 100) {
+    //             current = section.getAttribute('id');
+    //         }
+    //     });
+
+    //     document.querySelectorAll('.terms-nav-item a').forEach(a => {
+    //         a.classList.remove('active');
+    //         if (a.getAttribute('href').includes(current)) {
+    //             a.classList.add('active');
+    //         }
+    //     });
+    // });
+    </script>
+</body>
+
+</html>

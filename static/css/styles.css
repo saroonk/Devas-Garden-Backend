@@ -176,7 +176,7 @@ body {
 
 /* ── Desktop Category Dropdown (Hover to open) ── */
 @media (min-width: 992px) {
-    .dropdown-hover:hover .dropdown-menu {
+    .dropdown-hover:hover > .dropdown-menu {
         display: block;
         margin-top: 0;
         opacity: 1;
@@ -184,7 +184,7 @@ body {
         transform: translateY(0);
     }
 
-    .dropdown-hover .dropdown-menu {
+    .dropdown-hover > .dropdown-menu {
         display: block;
         opacity: 0;
         visibility: hidden;
@@ -225,6 +225,41 @@ body {
     background-color: #f5fbf0;
     color: var(--accent-green);
     transform: translateX(5px);
+}
+
+/* ── Nested Dropdown (Sub-menu) for Desktop ── */
+@media (min-width: 992px) {
+    .dropdown-submenu {
+        position: relative;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -5px;
+        margin-left: 0;
+        display: none; /* Changed from opacity/visibility */
+        border-radius: 12px;
+        padding: 5px;
+        min-width: 200px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block; /* Show only on parent hover */
+    }
+    
+    .dropdown-submenu .dropdown-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .submenu-icon {
+        font-size: 11px;
+        margin-left: 10px;
+        color: #999;
+    }
 }
 
 
@@ -560,6 +595,63 @@ body.mob-nav-open {
     background: #f0f8e8;
 }
 
+/* ── Nested Mobile Sub-accordion ── */
+.mob-subcat-item {
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.mob-subcat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 11px 24px 11px 38px; /* Matched to .mob-cat-submenu a */
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; /* Matched to .mob-cat-submenu a */
+    color: #444; /* Matched to .mob-cat-submenu a */
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.mob-subcat-btn:hover {
+    color: var(--accent-green);
+    background: #f7fbf2 !important;
+}
+
+.mob-subcat-chevron {
+    font-size: 12px;
+    transition: transform 0.28s ease;
+    color: #bbb;
+}
+
+.mob-subcat-btn.open .mob-subcat-chevron {
+    transform: rotate(90deg);
+    color: var(--accent-green);
+}
+
+.mob-subcat-menu {
+    display: none !important; /* Force hide by default */
+    flex-direction: column;
+    background: #fdfefc;
+    padding: 5px 0;
+    border-top: 1px solid #f9f9f9;
+}
+
+.mob-subcat-menu.open {
+    display: flex !important;
+}
+
+.mob-subcat-menu a {
+    padding: 11px 24px 11px 54px !important;
+    font-size: 15px !important;
+    color: #555 !important;
+    border-bottom: none !important;
+}
+
 /* Footer with Track Order button */
 .mob-nav-footer {
     padding: 20px 20px 32px;
@@ -672,7 +764,7 @@ body.mob-nav-open {
 .hero-subtitle {
     font-family: 'Clash Grotesk', sans-serif;
     font-weight: 400;
-    font-size: 50px;
+    font-size: 1.2rem !important;
     margin-bottom: 20px;
     line-height: 1.2;
 }
@@ -680,9 +772,9 @@ body.mob-nav-open {
 .hero-title {
     font-family: 'Clash Grotesk', sans-serif;
     font-weight: 600;
-    font-size: 85px;
+    font-size: 4rem !important;
     margin-bottom: 35px;
-    line-height: 0.9;
+    line-height: 1.2;
 }
 
 .btn-buy-now {
@@ -838,11 +930,11 @@ body.mob-nav-open {
     }
 
     .hero-title {
-        font-size: 64px;
+        font-size: 3rem !important;
     }
 
     .hero-subtitle {
-        font-size: 28px;
+        font-size: 1rem !important;
     }
 
     .slider-col {

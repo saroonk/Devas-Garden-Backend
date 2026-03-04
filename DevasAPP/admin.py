@@ -75,12 +75,6 @@ class ContactSubmissionAdmin(BaseAdmin):
 
 
 
-@admin.register(Product)
-class ProductAdmin(BaseAdmin):
-    list_display = ("name", "price","stock")
-  
-    search_fields = ("name",)
-
 
 
 @admin.register(Cart)
@@ -92,3 +86,60 @@ class CartAdmin(BaseAdmin):
 class CartItemAdmin(BaseAdmin):
     list_display = ("product", "quantity", )
     search_fields = ("product__name",)
+
+
+
+
+@admin.register(Category)
+class CategoryAdmin(BaseAdmin):
+    list_display = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
+
+@admin.register(SubCategory)
+class SubCategoryAdmin(BaseAdmin):
+    list_display = ('name', 'category')
+    list_filter = ('category',)
+    prepopulated_fields = {'slug': ('name',)}
+
+
+
+
+
+
+
+@admin.register(Zone)
+class ZoneAdmin(BaseAdmin):
+    list_display = ("name", "description")
+    search_fields = ("name",)
+
+@admin.register(State)
+class StateAdmin(BaseAdmin):
+    list_display = ("name", "zone")
+    search_fields = ("name", "zone")
+
+
+
+@admin.register(ProductDeliveryCharge)
+class ProductDeliveryChargeAdmin(BaseAdmin):
+    list_display = ("product", "zone", "charge")
+    list_filter = ("zone",)
+    search_fields = ("product__name", "zone__name")
+
+
+class ProductImageInline(admin.StackedInline):
+    model = ProductImage
+    extra = 1
+
+
+class ProductDeliveryInline(admin.StackedInline):
+    model = ProductDeliveryCharge
+    extra = 4
+
+
+class ProductAdmin(BaseAdmin):
+    list_display = ("title", "category", "new_price")
+    prepopulated_fields = {'slug': ('title',)}
+    inlines = [ProductImageInline, ProductDeliveryInline]
+
+
+admin.site.register(Product, ProductAdmin)

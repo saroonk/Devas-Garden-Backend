@@ -25,7 +25,7 @@
 
 <body>
 
-    <div class="header-sticky-wrapper">
+       <div class="header-sticky-wrapper">
         <div class="top-banner py-2">
             <div class="marquee-wrapper">
                 <div class="marquee-content">
@@ -34,6 +34,7 @@
                 </div>
             </div>
         </div>
+
 
 
         <!-- Mobile Nav Overlay -->
@@ -52,34 +53,54 @@
 
                 <!-- Nav Links -->
                 <ul class="mob-nav-links">
-                    <li><a href="#" class="mob-nav-link ">Home</a></li>
+                    <li><a href="{% url 'index' %}" class="mob-nav-link ">Home</a></li>
                     <li class="mob-cat-item">
                         <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
                             Category
                             <i class="bi bi-chevron-right mob-cat-chevron"></i>
                         </button>
                         <div class="mob-cat-submenu" id="mobCatSubmenu">
-                            <a href="#">🌿 Indoor Plants</a>
-                            <a href="#">🌳 Fruit Trees</a>
-                            <a href="#">🌸 Flowering Plants</a>
-                            <a href="#">🪴 Succulents & Cacti</a>
-                            <a href="#">🌱 Medicinal Plants</a>
-                            <a href="#">🪣 Gardening Supplies</a>
+                            <!-- Nested Sub-category: Indoor Plants -->
+                        {% for category in categories %}
+                            {% if category.subcategories.exists %}
+                            <div class="mob-subcat-item">
+                                <button class="mob-subcat-btn">
+                                    <span>{{ category.name }}</span>
+                                    <i class="bi bi-chevron-right mob-subcat-chevron"></i>
+                                </button>
+                                <div class="mob-subcat-menu">
+                                    {% for subcategory in category.subcategories.all %}
+                                    <a href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a>
+                                    {% endfor %}
+                                    <!-- <a href="#">Money Plants</a> -->
+                                </div>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                                <!-- <a href="#">🌳 Fruit Trees</a>
+                                <a href="#">🌸 Flowering Plants</a>
+                                <a href="#">🪴 Succulents & Cacti</a>
+                                <a href="#">🌱 Medicinal Plants</a>
+                                <a href="#">🪣 Gardening Supplies</a> -->
                         </div>
                     </li>
-                    <li><a href="{% url 'products' %}" class="mob-nav-link">Products</a></li>
+                    <li><a href="{% url 'products' %}" class="mob-nav-link active">Products</a></li>
                     <li><a href="{% url 'bloglisting' %}" class="mob-nav-link">Blog</a></li>
                     <li><a href="{% url 'contactus' %}" class="mob-nav-link">Contact Us</a></li>
                 </ul>
 
                 <!-- Track Order Button -->
                 <div class="mob-nav-footer">
-                                        {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
                     {% else %}
                     <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
                     {% endif %}
-                    <button class="btn btn-track w-100">Track Your Order</button>
+
+
+                    <a href="{% url 'trackorder' %}" class="btn btn-track w-100">Track Your Order</a>
                 </div>
             </div>
         </div>
@@ -87,7 +108,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container d-flex align-items-center">
                 <!-- Logo -->
-                <a class="navbar-brand me-4" href="#">
+                <a class="navbar-brand me-4" href="{% url 'index' %}">
                     <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
                 </a>
 
@@ -100,7 +121,13 @@
                         <button class="nav-icon-btn">
                             <i class="bi bi-bag"></i>
                         </button>
-                        <span class="cart-badge">0</span>
+                        <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
+                    </div>
+                    <div class="position-relative me-3">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="cart-badge"id="wish-count">0</span>
                     </div>
                     <!-- Custom hamburger — opens right drawer -->
                     <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
@@ -113,7 +140,7 @@
                 <!-- Desktop nav links -->
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link " href="#">Home</a></li>
+                        <li class="nav-item"><a class="nav-link " href="{% url 'index' %}">Home</a></li>
                         <li class="nav-item dropdown dropdown-hover">
                             <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
@@ -121,17 +148,32 @@
                             </a>
                             <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
                                 aria-labelledby="categoryDropdown">
-                                <li><a class="dropdown-item" href="#">🌿 Indoor Plants</a></li>
-                                <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                            {% for category in categories %}
+
+                                {% if category.subcategories.exists %}
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">
+                                        {{ category.name }} <i class="bi bi-chevron-right submenu-icon"></i>
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        {% for subcategory in category.subcategories.all %}
+                                        <li><a class="dropdown-item" href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a></li>
+                                {% endif %}
+                                <!-- <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
                                 <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
                                 <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
                                 <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
-                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li> -->
+                            {% endfor %}
                             </ul>
                         </li>
                         <li class="nav-item"><a class="nav-link active" href="{% url 'products' %}">Products</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'bloglisting' %}">Blog</a></li>
-
                         <li class="nav-item"><a class="nav-link" href="{% url 'contactus' %}">Contact Us</a></li>
                     </ul>
                 </div>
@@ -140,15 +182,23 @@
                 <div class="d-none d-lg-flex align-items-center gap-3">
                     <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
                     <div class="position-relative">
-                        <button class="nav-icon-btn"><i class="bi bi-bag"></i></button>
-                        <span class="cart-badge">0</span>
+                        <a href="{% url 'cart' %}" class="nav-icon-btn"><i class="bi bi-bag"></i></a>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+
+                    </div>
+                    <div class="position-relative ">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="cart-badge"id="wish-count">0</span>
                     </div>
                     {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
                     {% else %}
                     <a href="{% url 'login' %}" class="btn btn-track">Login</a>
                     {% endif %}
-                    <button class="btn btn-track">Track Your Order</button>
+                    
+                    <a href="{% url 'trackorder' %}" class="btn btn-track">Track Your Order</a>
                 </div>
             </div>
 
@@ -156,20 +206,49 @@
             <div id="searchPopup" class="search-popup-wrapper">
                 <div class="container h-100">
                     <div class="search-form-container">
-                        <form action="#" class="d-flex">
+                        <form action="{% url 'search' %}" method="GET" class="d-flex">
                             <input type="text" class="form-control"
-                                placeholder="Search for plants, trees, gardening tools..." aria-label="Search">
+                                placeholder="Search for plants, trees, gardening tools..."  name="q" aria-label="Search">
                             <button type="submit" class="btn btn-search-submit">
                                 <i class="bi bi-search text-white"></i>
                             </button>
                         </form>
                     </div>
                 </div>
-            </div>
         </nav>
     </div>
 
 
+
+
+
+    
+<div class="position-fixed top-0 start-50 translate-middle-x p-3"
+     style="z-index: 9999; width: 100%; max-width: 600px;">
+
+{% if messages %}
+  {% for message in messages %}
+    
+    <div class="alert 
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% elif message.tags == 'success' %}
+            alert-success
+        {% else %}
+            alert-primary
+        {% endif %}
+        alert-dismissible fade show shadow"
+        role="alert">
+
+        {{ message }}
+
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert"></button>
+    </div>
+
+  {% endfor %}
+{% endif %}
+</div>
 
 
 
@@ -180,8 +259,8 @@
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Products</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Litchi (Air Layered)- Fruit Plants & Tree
+                    <li class="breadcrumb-item"><a href="{% url 'products' %}">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.title }}
                     </li>
                 </ol>
             </nav>
@@ -190,21 +269,21 @@
                 <div class="col-lg-5">
                     <div class="product-gallery">
                         <div class="main-image-container mb-3">
-                            <img id="mainProductImage" src="https://picsum.photos/id/10/800/800" alt="Main Product"
+                            <img id="mainProductImage" src="{{ product.main_image.url }}" alt="Main Product"
                                 class="main-img w-100">
                         </div>
                         <div class="thumbnail-slider-wrapper position-relative px-4">
                             <div class="owl-carousel thumbnail-slider">
-                                <div class="item"><img src="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}" alt="Thumb 1"
-                                        class="thumb-img active" data-large="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}"></div>
-                                <div class="item"><img src="https://picsum.photos/id/11/400/400" alt="Thumb 2"
-                                        class="thumb-img" data-large="https://picsum.photos/id/11/400/400"></div>
-                                <div class="item"><img src="https://picsum.photos/id/12/400/400" alt="Thumb 3"
-                                        class="thumb-img" data-large="https://picsum.photos/id/12/400/400"></div>
-                                <div class="item"><img src="https://picsum.photos/id/13/400/400" alt="Thumb 4"
-                                        class="thumb-img" data-large="https://picsum.photos/id/13/800/800"></div>
-                                <div class="item"><img src="https://picsum.photos/id/14/400/400" alt="Thumb 5"
-                                        class="thumb-img" data-large="https://picsum.photos/id/14/800/800"></div>
+                        <div class="item">
+                            <img src="{{ product.main_image.url }}" alt="Thumbnail {{ forloop.counter }}"
+                                        class="thumb-img active" data-large="{{ product.main_image.url }}"></div>
+                            {% for image in product.images.all %}
+                                 <div class="item"><img src="{{ image.image.url }}" alt="Thumbnail {{ forloop.counter }}"
+                                        class="thumb-img {% if forloop.first %}active{% endif %}" data-large="{{ image.image.url }}"></div>
+                            {% endfor %}
+                                <!-- <div class="item"><img src="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}" alt="Thumb 1"
+                                        class="thumb-img active" data-large="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}"></div> -->
+
                             </div>
                             <!-- Thumb Slider Nav -->
                             <button class="thumb-prev"><i class="bi bi-chevron-left"></i></button>
@@ -216,7 +295,7 @@
                 <!-- Product Info Column -->
                 <div class="col-lg-7">
                     <div class="product-info-panel">
-                        <h1 class="product-title mb-3">Litchi (Air Layered)- Fruit Plants & Tree</h1>
+                        <h1 class="product-title mb-3">{{ product.title }}</h1>
 
                         <div class="rating-reviews d-flex align-items-center gap-3 mb-4">
                             <div class="stars text-warning">
@@ -226,15 +305,15 @@
                                 <i class="bi bi-star-fill"></i>
                                 <i class="bi bi-star-half"></i>
                             </div>
-                            <span class="review-count">288 reviews</span>
+                            <span class="review-count">{{product.category.name|title}}</span>
                             <span class="divider">|</span>
-                            <span class="product-size">100ml</span>
+                            <span class="product-size">{{product.subcategory.name|title}}</span>
                         </div>
 
-                        <h2 class="product-price mb-4">$40.99</h2>
+                        <h2 class="product-price mb-4">₹{{ product.new_price|floatformat:2 }}</h2>
 
                         <div class="product-description mb-4">
-                            <div id="shortDesc" class="desc-content">
+                            <!-- <div id="shortDesc" class="desc-content">
                                 Vitamin C, also known as ascorbic acid, is a vital nutrient for various bodily
                                 functions, including the maintenance of healthy skin, blood vessels, bones, and
                                 cartilage. It also helps with wound healing and acts as an antioxidant.
@@ -244,7 +323,26 @@
                                     large-scale agriculture. They require minimal maintenance while providing abundant
                                     fruit.
                                 </span>
-                            </div>
+                            </div> -->
+                            <div id="shortDesc" class="desc-content">
+
+    {% with words=product.short_description|wordcount %}
+        
+        {% if words > 30 %}
+            
+            {{ product.short_description|truncatewords:30 }}
+            
+            <span class="extra-content">
+                {{ product.short_description|slice:"200:" }}
+            </span>
+
+        {% else %}
+            {{ product.short_description }}
+        {% endif %}
+
+    {% endwith %}
+
+</div>
                             <a href="javascript:void(0)" id="readMoreBtn" class="read-more-link">Read more...</a>
                         </div>
 
@@ -254,13 +352,24 @@
                                 <input type="number" class="qty-input" value="1" min="1">
                                 <button class="qty-btn plus"><i class="bi bi-plus"></i></button>
                             </div>
-                            <button class="btn btn-add-cart-large flex-grow-1">Add to Cart</button>
+                            <button data-product-id="{{ product.id }}" class="btn btn-add-cart-large addtocartbtn flex-grow-1">Add to Cart</button>
                         </div>
 
                         <div class="additional-meta d-flex gap-4 mb-5">
-                            <a href="#" class="meta-link"><i class="bi bi-heart me-2"></i> Add to wishlist</a>
-                            <span class="meta-link"><i class="bi bi-check-circle-fill text-success me-2"></i> 30 days
-                                money back guarantee</span>
+                            <!-- <a href="#" class="meta-link" id="addtowishlist" data-wishlist-id="{{ product.id }}"><i class="wishicon bi bi-heart text-danger me-2"></i> Add to wishlist</a> -->
+                             <a href="#" class=" meta-link add-to-wishlist" data-product-id="{{ product.id }}">
+    <i class="wishicon bi 
+        {% if in_wishlist %}
+            bi-heart-fill text-danger
+        {% else %}
+            bi-heart
+        {% endif %}
+        me-2">
+    </i>
+    Add to wishlist
+</a>
+                            <span class="meta-link"><i class="bi bi-check-circle-fill text-success me-2"></i> Damage
+                                Replacement Assurance</span>
                         </div>
 
                         <!-- Tabbed Content Section -->
@@ -284,8 +393,7 @@
                                             <div id="featDetails" class="accordion-collapse collapse show"
                                                 data-bs-parent="#accordionDetails">
                                                 <div class="accordion-body">
-                                                    Our air-layered litchi trees are specially cultivated to ensure
-                                                    early fruiting and high yield. These plants are disease-resistant.
+                                                   {{ product.key_features }}
                                                 </div>
                                             </div>
                                         </div>
@@ -299,8 +407,8 @@
                                             <div id="ingDetails" class="accordion-collapse collapse"
                                                 data-bs-parent="#accordionDetails">
                                                 <div class="accordion-body">
-                                                    Pure organic sapling with natural soil nutrients and optimized root
-                                                    structure for transplanting.
+                                                    {{ product.ingredients }}
+
                                                 </div>
                                             </div>
                                         </div>
@@ -314,8 +422,8 @@
                                             <div id="useDetails" class="accordion-collapse collapse"
                                                 data-bs-parent="#accordionDetails">
                                                 <div class="accordion-body">
-                                                    Plant in well-drained soil with partial sunlight. Water regularly
-                                                    during the first few months after planting.
+                                                   {{ product.how_to_use }}
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -427,6 +535,7 @@
                 </div>
             </div>
         </div>
+ 
     </main>
 
 
@@ -451,73 +560,26 @@
 
             <div class="row g-4">
                 <!-- Product 1 -->
+                {% for product in featured_products %}
                 <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
+                    <div class="product-card" data-url="{% url 'productdetails' product.slug %}">
                         <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/10/400/400" alt="Product 1" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
+                            <img src="{{ product.main_image.url }}" alt="{{ product.title }}" class="product-img">
+                            <span class="product-badge">{{ product.category.name|title }}</span>
                         </div>
                         <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <h6 class="product-name">{{ product.title|upper }}</h6>
                             <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
+                                <span class="current-price">RS {{ product.new_price|floatformat:2 }}</span>
+                                <span class="old-price">RS {{ product.old_price|floatformat:2 }}</span>
                             </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                            <button data-product-id="{{ product.id }}"  class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
                         </div>
                     </div>
                 </div>
-                <!-- Product 2 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/11/400/400" alt="Product 2" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/12/400/400" alt="Product 3" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 4 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/13/400/400" alt="Product 4" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
+                {% empty %}
+                <p>No featured products available.</p>
+                {% endfor %}
 
             </div>
         </div>
@@ -702,6 +764,182 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="{% static 'js/script.js' %}"></script>
+
+    <script>
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const qtyInput = document.querySelector('.qty-input');
+    const plusBtn = document.querySelector('.qty-btn.plus');
+    const minusBtn = document.querySelector('.qty-btn.minus');
+    if (qtyInput && plusBtn && minusBtn) {
+        plusBtn.addEventListener('click', () => qtyInput.value = parseInt(qtyInput.value) + 1);
+        minusBtn.addEventListener('click', () => {
+            if (parseInt(qtyInput.value) > 1) qtyInput.value = parseInt(qtyInput.value) - 1;
+        });
+    }
+
+});
+
+
+
+        
+const addtocartbtn = Array.from(document.getElementsByClassName('addtocartbtn'));
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+addtocartbtn.forEach(el => {
+    el.addEventListener('click', function () {
+
+        const productId = this.dataset.productId;
+        const csrfToken = getCookie('csrftoken');
+
+        let quantity = 1;
+        const container = this.closest('.product-actions');
+
+        if (container) {
+            const qtyInput = container.querySelector('.qty-input');
+            if (qtyInput) {
+                quantity = qtyInput.value;
+            }
+        }
+
+        fetch("{% url 'add_to_cart' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": csrfToken
+            },
+            body: `product_id=${productId}&quantity=${quantity}`
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.status === "success") {
+
+                // Update cart badge
+                document.querySelectorAll('.cart-badge').forEach(el => {
+                    el.textContent = data.cart_count;
+                });
+
+                // Button animation
+                if (!container) {
+                    this.textContent = "Added";
+                    this.style.backgroundColor = "#1d2d03ff";
+
+                    setTimeout(() => {
+                        this.textContent = "Add to cart";
+                        this.style.backgroundColor = "#558903";
+                        alert(`${quantity} ${quantity == 1 ? 'item' : 'item'} added to cart!`);
+
+                    }, 1500);
+                }else{
+                    this.textContent = "Added";
+                   
+                    this.style.backgroundColor = "#e6d357";
+
+                    setTimeout(() => {
+                        this.textContent = "Add to cart";
+                        this.style.backgroundColor = "#EDDD5E";
+                        alert(`${quantity} ${quantity == 1 ? 'item' : 'items'} added to cart!`);
+                    }, 1500);
+                    
+                }
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+});
+
+
+
+
+
+
+const wishlistBtn = document.getElementById('addtowishlist');
+
+
+// wishlistBtn.addEventListener('click', function () {
+//     const wishlistId = this.dataset.wishlistId;
+//     const csrfToken = getCookie('csrftoken');
+
+//     fetch("{% url 'add_to_wishlist' %}", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/x-www-form-urlencoded",
+//             "X-CSRFToken": csrfToken
+//         },
+//         body: `product_id=${wishlistId}`
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.status === "success") {
+//             // Update wishlist badge
+//             document.querySelectorAll('#wish-count').forEach(el => {
+//                 el.textContent = data.wishlist_count;
+//             });
+
+//             document.querySelectorAll('.wishicon').forEach(el => {
+//                 el.classList.add('text-danger');
+//                 el.classList.remove('bi bi-heart');
+//                 el.classList.add('bi-heart-fill');
+//             });
+
+    
+//         }
+//     })
+// });
+
+document.querySelector(".add-to-wishlist").addEventListener("click", function(e) {
+
+    e.preventDefault();
+
+    let button = this;
+    let icon = button.querySelector(".wishicon");
+    let productId = button.dataset.productId;
+
+    fetch("/add-to-wishlist/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": csrftoken
+        },
+        body: `product_id=${productId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.status === "added") {
+            icon.classList.remove("bi-heart");
+            icon.classList.add("bi-heart-fill", "text-danger");
+        } 
+        else if (data.status === "removed") {
+            icon.classList.remove("bi-heart-fill", "text-danger");
+            icon.classList.add("bi-heart");
+        }
+
+    });
+
+});
+
+    </script>
 </body>
 
 </html>

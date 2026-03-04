@@ -18,6 +18,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
+from django.core.paginator import Paginator
+
+
 
 def get_or_create_cart(request):
     """
@@ -58,6 +61,8 @@ def index(request):
 
     testimonials = Testimonial.objects.filter(is_active=True)
     blogs =Blog.objects.select_related('category').all()[:3]
+
+   
 
     return render(request, 'index.html',{'hero':hero,'offer':offer,'test':testimonials, 'blogs': blogs})
 
@@ -216,12 +221,69 @@ def contactus(request):
 def privacypolicy(request):
     return render(request, 'privacypolicy.html')
 
-def productdetails(request):
-    return render(request, 'productdetails.html')
+def productdetails(request, slug):
+    product = (Product.objects.select_related("category", "subcategory")
+                .prefetch_related("images")).get(slug=slug)
 
-def products(request):
-    products = Product.objects.all()
-    return render(request, 'products.html', {'products': products})
+    
+    in_wishlist = False
+
+    if request.user.is_authenticated:
+        in_wishlist = Wishlist.objects.filter(
+            user=request.user,
+            product=product
+        ).exists()
+    else:
+        if request.session.session_key:
+            in_wishlist = Wishlist.objects.filter(
+                session_id=request.session.session_key,
+                product=product
+            ).exists()
+
+    featured_products = Product.objects.filter(is_featured=True).exclude(id=product.id)[:4]
+    return render(request, 'productdetails.html', {'product': product, 'featured_products': featured_products,"in_wishlist": in_wishlist   })
+
+def products(request, slug=None):
+
+   
+
+
+    products = (
+        Product.objects
+        .select_related("category", "subcategory")
+        .prefetch_related("images")
+    )
+
+    selected_category = None
+    selected_subcategory = None
+
+    if slug:
+        # Try Category first
+        category = Category.objects.filter(slug=slug).first()
+
+        if category:
+            selected_category = category
+            products = products.filter(category=category)
+        else:
+            # Try SubCategory
+            subcategory = get_object_or_404(SubCategory, slug=slug)
+            selected_subcategory = subcategory
+            products = products.filter(subcategory=subcategory)
+
+
+    paginator = Paginator(products,50)
+    page_number = request.GET.get("page")
+    page_obj =paginator.get_page(page_number)
+    productscount = products.count()
+    context = {
+        "page_obj": page_obj,
+        "selected_category": selected_category,
+        "selected_subcategory": selected_subcategory,
+            "productscount": productscount
+    }
+
+    return render(request, "products.html", context)
+
 
 def returnpolicy(request):
     return render(request, 'returnpolicy.html')
@@ -229,8 +291,42 @@ def returnpolicy(request):
 def terms(request):
     return render(request, 'terms.html')
 
+def shippinganddeliveryPolicy(request):
+    return render(request, 'shippinganddeliveryPolicy.html')
+
 def trackorder(request):
     return render(request, 'trackorder.html')
+
+
+
+
+# @require_POST
+# def add_to_cart(request):
+#     print("Add to cart request received")
+#     product_id = request.POST.get('product_id')
+#     product = Product.objects.get(id=product_id)
+
+   
+#     cart = get_or_create_cart(request)
+
+#     cart_item, created = CartItem.objects.get_or_create(
+#         cart=cart,
+#         product=product
+#     )
+
+#     if not created:
+#         cart_item.quantity += 1
+#         cart_item.save()
+
+#     cart_count = cart.cartitem_set.count()
+
+
+#     print(f"Product {product.title} added to cart. Total items in cart: {cart_count}")
+
+#     return JsonResponse({
+#         'status': 'success',
+#         'cart_count': cart_count
+#     })
 
 
 
@@ -241,6 +337,11 @@ def add_to_cart(request):
     product_id = request.POST.get('product_id')
     product = Product.objects.get(id=product_id)
 
+    quantity = int(request.POST.get('quantity', 1))  # default 1
+
+    print(f"Requested quantity: {quantity} for product {product.title}")
+
+
    
     cart = get_or_create_cart(request)
 
@@ -249,21 +350,22 @@ def add_to_cart(request):
         product=product
     )
 
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    if created:
+        cart_item.quantity = quantity
+    else:
+        cart_item.quantity += quantity
+
+    cart_item.save()
 
     cart_count = cart.cartitem_set.count()
 
 
-    print(f"Product {product.name} added to cart. Total items in cart: {cart_count}")
+    print(f"Product {product.title} added to cart. Total items in cart: {cart_count}")
 
     return JsonResponse({
         'status': 'success',
         'cart_count': cart_count
     })
-
-
 
 
 
@@ -282,7 +384,7 @@ def update_cart_quantity(request):
 
 
         product = cart_item.product
-        subtotal = product.price * quantity
+        subtotal = product.new_price * quantity
 
 
         # subproduct = Product.objects.get(id=product_id)
@@ -299,3 +401,78 @@ def update_cart_quantity(request):
         'total': float(cart.total_amount),
         # 'cart_count': cart_count
     })
+
+
+
+
+
+
+def wishlist(request):
+    if request.user.is_authenticated:
+        products = Product.objects.filter(
+            wishlist__user=request.user
+        )
+    else:
+        if not request.session.session_key:
+            request.session.create()
+
+        products = Product.objects.filter(
+            wishlist__session_id=request.session.session_key
+        )
+
+    return render(request, 'wishlist.html', {'products': products})
+
+def add_to_wishlist(request):
+    product_id = request.POST.get('product_id')
+    product = Product.objects.get(id=product_id)
+
+    if request.user.is_authenticated:
+        wishlist_item = Wishlist.objects.filter(
+            user=request.user,
+            product=product
+        ).first()
+    else:
+        if not request.session.session_key:
+            request.session.create()
+
+        wishlist_item = Wishlist.objects.filter(
+            session_id=request.session.session_key,
+            product=product
+        ).first()
+
+    if wishlist_item:
+        wishlist_item.delete()
+        status = "removed"
+    else:
+        if request.user.is_authenticated:
+            Wishlist.objects.create(
+                user=request.user,
+                product=product
+            )
+        else:
+            Wishlist.objects.create(
+                session_id=request.session.session_key,
+                product=product
+            )
+        status = "added"
+
+    return JsonResponse({
+        'status': status,
+    })
+def search(request):
+    query = request.GET.get('q', '')
+    products = Product.objects.filter(title__icontains=query)
+
+    paginator = Paginator(products, 50) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    productscount = products.count()
+    search_query = query
+
+    context = {
+        'query': query,
+        'page_obj': page_obj,
+        'productscount': productscount,
+        'search_query': search_query
+    }
+    return render(request, 'products.html', context)

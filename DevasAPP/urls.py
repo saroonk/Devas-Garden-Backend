@@ -9,10 +9,13 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('contactus/', views.contactus, name='contactus'),
     path('privacypolicy/', views.privacypolicy, name='privacypolicy'),
-    path('productdetails/', views.productdetails, name='productdetails'),
+    path('productdetails/<slug:slug>/', views.productdetails, name='productdetails'),
     path('products/', views.products, name='products'),
+    path("products/category/<slug:slug>/", views.products, name="products_by_category"),
+
     path('returnpolicy/', views.returnpolicy, name='returnpolicy'),
     path('terms/', views.terms, name='terms'),
+    path('shippinganddeliveryPolicy/', views.shippinganddeliveryPolicy, name='shippinganddeliveryPolicy'),
     path('trackorder/', views.trackorder, name='trackorder'),
 
 
@@ -22,5 +25,12 @@ urlpatterns = [
     path('add-to-cart/', views.add_to_cart, name='add_to_cart'),
 
     path('update-cart/', views.update_cart_quantity, name='update_cart_quantity'),
+
+
+    path('wishlist/', views.wishlist, name='wishlist'),
+
+    path('search/', views.search, name='search'),
+
+    path('add-to-wishlist/', views.add_to_wishlist, name='add_to_wishlist'),
 
 ]
