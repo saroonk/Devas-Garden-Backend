@@ -117,17 +117,19 @@
                     <button class="nav-icon-btn me-2" id="searchBtnMobile">
                         <i class="bi bi-search"></i>
                     </button>
-                    <div class="position-relative me-3">
-                        <button class="nav-icon-btn">
+
+                    <div class="position-relative me-2 ">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn">
                             <i class="bi bi-bag"></i>
-                        </button>
+                        </a>
                         <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
                     </div>
+
                     <div class="position-relative me-3">
                         <a href="{% url 'wishlist' %}" class="nav-icon-btn">
                             <i class="bi bi-heart"></i>
                         </a>
-                        <span class="cart-badge"id="wish-count">0</span>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
                     </div>
                     <!-- Custom hamburger — opens right drawer -->
                     <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
@@ -190,7 +192,7 @@
                         <a href="{% url 'wishlist' %}" class="nav-icon-btn">
                             <i class="bi bi-heart"></i>
                         </a>
-                        <span class="cart-badge"id="wish-count">0</span>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
                     </div>
                     {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
@@ -352,12 +354,18 @@
                                 <input type="number" class="qty-input" value="1" min="1">
                                 <button class="qty-btn plus"><i class="bi bi-plus"></i></button>
                             </div>
+                            {% if product.stock > 0 %}
                             <button data-product-id="{{ product.id }}" class="btn btn-add-cart-large addtocartbtn flex-grow-1">Add to Cart</button>
+                            {% else %}
+                            <button class="btn btn-add-cart-large addtocartbtn bg-danger text-white flex-grow-1" disabled>Out of Stock</button>
+                            {% endif %}
                         </div>
 
                         <div class="additional-meta d-flex gap-4 mb-5">
                             <!-- <a href="#" class="meta-link" id="addtowishlist" data-wishlist-id="{{ product.id }}"><i class="wishicon bi bi-heart text-danger me-2"></i> Add to wishlist</a> -->
-                             <a href="#" class=" meta-link add-to-wishlist" data-product-id="{{ product.id }}">
+
+                            
+                             <a href="#" class=" meta-link " id="addtowishlist" data-wishlist-id="{{ product.id }}">
     <i class="wishicon bi 
         {% if in_wishlist %}
             bi-heart-fill text-danger
@@ -573,7 +581,11 @@
                                 <span class="current-price">RS {{ product.new_price|floatformat:2 }}</span>
                                 <span class="old-price">RS {{ product.old_price|floatformat:2 }}</span>
                             </div>
+                            {% if product.stock > 0 %}
                             <button data-product-id="{{ product.id }}"  class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                            {% else %}
+                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn" >Out of Stock</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -875,69 +887,71 @@ addtocartbtn.forEach(el => {
 
 const wishlistBtn = document.getElementById('addtowishlist');
 
+wishlistBtn.addEventListener('click', function () {
+    const wishlistId = this.dataset.wishlistId;
+    const csrfToken = getCookie('csrftoken');
 
-// wishlistBtn.addEventListener('click', function () {
-//     const wishlistId = this.dataset.wishlistId;
-//     const csrfToken = getCookie('csrftoken');
-
-//     fetch("{% url 'add_to_wishlist' %}", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/x-www-form-urlencoded",
-//             "X-CSRFToken": csrfToken
-//         },
-//         body: `product_id=${wishlistId}`
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.status === "success") {
-//             // Update wishlist badge
-//             document.querySelectorAll('#wish-count').forEach(el => {
-//                 el.textContent = data.wishlist_count;
-//             });
-
-//             document.querySelectorAll('.wishicon').forEach(el => {
-//                 el.classList.add('text-danger');
-//                 el.classList.remove('bi bi-heart');
-//                 el.classList.add('bi-heart-fill');
-//             });
-
-    
-//         }
-//     })
-// });
-
-document.querySelector(".add-to-wishlist").addEventListener("click", function(e) {
-
-    e.preventDefault();
-
-    let button = this;
-    let icon = button.querySelector(".wishicon");
-    let productId = button.dataset.productId;
-
-    fetch("/add-to-wishlist/", {
+    fetch("{% url 'add_to_wishlist' %}", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": csrftoken
+            "X-CSRFToken": csrfToken
         },
-        body: `product_id=${productId}`
+        body: `product_id=${wishlistId}`
     })
     .then(response => response.json())
     .then(data => {
+        if (data.success) {
+            const icon = document.querySelector('.wishicon');
 
-        if (data.status === "added") {
-            icon.classList.remove("bi-heart");
-            icon.classList.add("bi-heart-fill", "text-danger");
-        } 
-        else if (data.status === "removed") {
-            icon.classList.remove("bi-heart-fill", "text-danger");
-            icon.classList.add("bi-heart");
+            if (data.status === "removed") {
+                // Item was removed — show empty heart
+                icon.classList.remove('bi-heart-fill', 'text-danger');
+                icon.classList.add('bi-heart');
+            } else {
+                // Item was added — show filled red heart
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill', 'text-danger');
+            }
+
+            // Update wishlist badge count
+            document.querySelectorAll('#wish-count').forEach(el => {
+                el.textContent = data.wishlist_count;
+            });
         }
-
     });
-
 });
+// document.querySelector(".add-to-wishlist").addEventListener("click", function(e) {
+
+//     e.preventDefault();
+
+//     let button = this;
+//     let icon = button.querySelector(".wishicon");
+//     let productId = button.dataset.productId;
+
+//     fetch("/add-to-wishlist/", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/x-www-form-urlencoded",
+//             "X-CSRFToken": csrftoken
+//         },
+//         body: `product_id=${productId}`
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+
+//         if (data.status === "added") {
+//             icon.classList.remove("bi-heart");
+//             icon.classList.add("bi-heart-fill", "text-danger");
+//         } 
+//         else if (data.status === "removed") {
+//             icon.classList.remove("bi-heart-fill", "text-danger");
+//             icon.classList.add("bi-heart");
+//         }
+
+//     });
+
+// });
 
     </script>
 </body>

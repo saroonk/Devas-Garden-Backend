@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'DevasAPP',
     'ckeditor',
     'ckeditor_uploader',
+    'django_filters',
+    "django_htmx",
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = 'DEVASGARDEN.urls'
@@ -66,7 +69,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'DevasAPP.context_processors.cart_count',
-                'DevasAPP.category_context_processor.categories'
+                'DevasAPP.category_context_processor.categories',
+                'DevasAPP.wishlist_count_context.wishlist_count',
             ],
         },
     },
@@ -166,3 +170,12 @@ CKEDITOR_CONFIGS = {
         ]),
     },
 }
+
+
+
+# RAZORPAY_KEY_ID = "rzp_test_ijlTN1GsjIm2AH"
+# RAZORPAY_KEY_SECRET = "xim3eRmpBAM5eYNRMPaSdRC7"
+
+
+RAZORPAY_KEY_ID = "rzp_test_SLFGCvb0VMW4Dl"
+RAZORPAY_KEY_SECRET = "1t5NKclonzMGs1mD9smIywJ3"

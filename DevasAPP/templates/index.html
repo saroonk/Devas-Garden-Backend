@@ -125,7 +125,7 @@
                     <button class="nav-icon-btn me-2" id="searchBtnMobile">
                         <i class="bi bi-search"></i>
                     </button>
-                    <div class="position-relative me-3">
+                    <div class="position-relative me-2 ">
                         <a href="{% url 'cart' %}" class="nav-icon-btn">
                             <i class="bi bi-bag"></i>
                         </a>
@@ -136,7 +136,7 @@
                         <a href="{% url 'wishlist' %}" class="nav-icon-btn">
                             <i class="bi bi-heart"></i>
                         </a>
-                        <span class="cart-badge"id="wish-count">0</span>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
                     </div>
                     <!-- Custom hamburger — opens right drawer -->
                     <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
@@ -196,10 +196,11 @@
 
                     </div>
 
-                    <div class="position-relative">
-                    <a href="{% url 'wishlist' %}" class="nav-icon-btn" ><i class="bi bi-heart"></i></a>
-                        <span class="cart-badge" id="cart-count">0</span>
-
+                    <div class="position-relative ">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
                     </div>
 
                     {% if request.user.is_authenticated %}

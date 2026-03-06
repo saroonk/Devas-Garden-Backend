@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="checkout.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
 </head>
 
 <body>
@@ -108,12 +109,20 @@
                     <button class="nav-icon-btn me-2" id="searchBtnMobile">
                         <i class="bi bi-search"></i>
                     </button>
-                    <div class="position-relative me-3">
-                        <button class="nav-icon-btn">
+                    <div class="position-relative me-2 ">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn">
                             <i class="bi bi-bag"></i>
-                        </button>
+                        </a>
                         <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
                     </div>
+
+                    <div class="position-relative me-3">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
+                    </div>
+
                     <!-- Custom hamburger — opens right drawer -->
                     <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
                         <span></span>
@@ -171,6 +180,14 @@
                         <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
 
                     </div>
+
+                                        <div class="position-relative ">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
+                    </div>
+
                     {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
                     {% else %}
@@ -208,6 +225,38 @@
 
 
 
+    
+
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3"
+     style="z-index: 9999; width: 100%; max-width: 600px;">
+
+{% if messages %}
+  {% for message in messages %}
+    
+    <div class="alert 
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% elif message.tags == 'success' %}
+            alert-success
+        {% else %}
+            alert-primary
+        {% endif %}
+        alert-dismissible fade show shadow"
+        role="alert">
+
+        {{ message }}
+
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert"></button>
+    </div>
+
+  {% endfor %}
+{% endif %}
+</div>
+
+
+
+
     <section class="checkout-section">
         <div class="container">
 
@@ -223,218 +272,101 @@
                     <li>Payment</li>
                 </ol>
             </nav>
-
+              <form  method="POST" action="{% url 'place_order' %}">
+                {% csrf_token %}
             <div class="row g-lg-5 g-4">
 
+           
                 <!-- ── LEFT: Forms ── -->
                 <div class="col-lg-7">
-
+  
                     <!-- ─── Contact Information ─── -->
+
                     <div class="checkout-block">
                         <div class="checkout-block-header">
                             <h2 class="checkout-block-title">Contact Information</h2>
-                            <p class="checkout-block-sub">Already have an account? <a href="#">Log in</a></p>
+                            {% if not request.user.is_authenticated %}
+                            <p class="checkout-block-sub">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+                            {% endif %}
                         </div>
 
                         <div class="checkout-form-group">
                             <label class="checkout-label" for="email">Email address</label>
-                            <input type="email" id="email" class="checkout-input" placeholder="you@example.com">
+                            <input type="email" id="email" name="email" class="checkout-input" placeholder="you@example.com">
                         </div>
 
-                        <div class="checkout-form-check">
+                        <!-- <div class="checkout-form-check">
                             <input type="checkbox" id="newsCheck" class="checkout-checkbox">
                             <label for="newsCheck">Keep me updated on news and exclusive offers</label>
-                        </div>
+                        </div> -->
                     </div>
 
                     <!-- ─── Delivery / Shipping Address ─── -->
                     <div class="checkout-block">
                         <h2 class="checkout-block-title">Delivery Address</h2>
+                    
 
                         <div class="row g-3">
                             <div class="col-sm-6">
                                 <label class="checkout-label" for="firstName">First name</label>
-                                <input type="text" id="firstName" class="checkout-input" placeholder="First name">
+                                <input type="text" name="firstName" id="firstName" class="checkout-input" placeholder="First name">
                             </div>
                             <div class="col-sm-6">
                                 <label class="checkout-label" for="lastName">Last name</label>
-                                <input type="text" id="lastName" class="checkout-input" placeholder="Last name">
+                                <input type="text" name="lastName" id="lastName" class="checkout-input" placeholder="Last name">
                             </div>
 
                             <div class="col-12">
                                 <label class="checkout-label" for="address">Address</label>
-                                <input type="text" id="address" class="checkout-input"
+                                <input type="text" name="address" id="address" class="checkout-input"
                                     placeholder="House no., Street, Area">
                             </div>
 
                             <div class="col-12">
                                 <label class="checkout-label" for="address2">Apartment, suite, etc. <span
                                         class="optional-tag">(optional)</span></label>
-                                <input type="text" id="address2" class="checkout-input"
+                                <input type="text" name="address2" id="address2" class="checkout-input"
                                     placeholder="Apartment, suite, etc.">
                             </div>
 
                             <div class="col-sm-5">
                                 <label class="checkout-label" for="pincode">PIN code</label>
-                                <input type="text" id="pincode" class="checkout-input" placeholder="6-digit PIN">
+                                <input type="text" name="pincode" id="pincode" class="checkout-input" placeholder="6-digit PIN">
                             </div>
                             <div class="col-sm-7">
                                 <label class="checkout-label" for="city">City</label>
-                                <input type="text" id="city" class="checkout-input" placeholder="City">
+                                <input type="text" name="city" id="city" class="checkout-input" placeholder="City">
                             </div>
 
                             <div class="col-sm-6">
                                 <label class="checkout-label" for="state">State</label>
                                 <select id="state" name="state" class="checkout-input checkout-select">
                                 <!-- <select id="state" class="checkout-input checkout-select"></select> -->
-                                    <option value="">Select state</option>
-                                    <option >Andhra Pradesh</option>
-                                    <option >Delhi</option>
-                                    <option >Gujarat</option>
-                                    <option >Karnataka</option>
-                                    <option >Kerala</option>
-                                    <option >Maharashtra</option>
-                                    <option >Rajasthan</option>
-                                    <option >Tamil Nadu</option>
-                                    <option >Telangana</option>
-                                    <option >Uttar Pradesh</option>
-                                    <option >West Bengal</option>
+
+                                {% for state in states %}
+                                    <option value="{{ state.id }}">{{ state.name }}</option>
+                                {% endfor %}
+                 
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <label class="checkout-label" for="phone">Phone</label>
-                                <input type="tel" id="phone" class="checkout-input" placeholder="+91 00000 00000">
+                                <input type="tel" name="phone" id="phone" class="checkout-input" placeholder="+91 00000 00000">
                             </div>
                         </div>
 
-                        <!-- <div class="checkout-form-check mt-3">
-                            <input type="checkbox" id="saveAddress" class="checkout-checkbox" checked>
-                            <label for="saveAddress">Save this address for next time</label>
-                        </div> -->
+              
                     </div>
 
-                    <!-- ─── Shipping Method ─── -->
-                    <!-- <div class="checkout-block">
-                        <h2 class="checkout-block-title">Shipping Method</h2>
-
-                        <div class="shipping-option selected" id="shipStandard">
-                            <div class="shipping-option-radio">
-                                <div class="radio-dot"></div>
-                            </div>
-                            <div class="shipping-option-info">
-                                <p class="shipping-option-name">Standard Delivery</p>
-                                <p class="shipping-option-eta">4–5 business days</p>
-                            </div>
-                            <span class="shipping-option-price free-tag">FREE</span>
-                        </div>
-
-                        <div class="shipping-option" id="shipExpress">
-                            <div class="shipping-option-radio">
-                                <div class="radio-dot"></div>
-                            </div>
-                            <div class="shipping-option-info">
-                                <p class="shipping-option-name">Express Delivery</p>
-                                <p class="shipping-option-eta">1–2 business days</p>
-                            </div>
-                            <span class="shipping-option-price">RS. 99.00</span>
-                        </div>
-                    </div> -->
-
-                    <!-- ─── Payment Method ─── -->
-                    <!-- <div class="checkout-block">
-                        <h2 class="checkout-block-title">Payment Method</h2>
-                        <p class="checkout-block-sub mb-3">All transactions are secure and encrypted.</p>
-
-                        <div class="payment-option selected" id="payCod" data-method="cod">
-                            <div class="payment-option-radio">
-                                <div class="radio-dot"></div>
-                            </div>
-                            <div class="payment-option-info">
-                                <span class="payment-option-label">Cash on Delivery (COD)</span>
-                            </div>
-                            <i class="bi bi-cash-coin payment-icon"></i>
-                        </div>
-
-                        <div class="payment-details-panel" id="codPanel">
-                            <p class="payment-note">
-                                <i class="bi bi-info-circle me-2"></i>
-                                Pay with cash when your order is delivered. Please keep exact change ready.
-                            </p>
-                        </div>
-
-                        <div class="payment-option" id="payUpi" data-method="upi">
-                            <div class="payment-option-radio">
-                                <div class="radio-dot"></div>
-                            </div>
-                            <div class="payment-option-info">
-                                <span class="payment-option-label">UPI</span>
-                            </div>
-                            <div class="payment-logos">
-                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/googlepay.svg"
-                                    alt="GPay" class="payment-logo">
-                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/phonepe.svg"
-                                    alt="PhonePe" class="payment-logo">
-                            </div>
-                        </div>
-
-                        <div class="payment-details-panel d-none" id="upiPanel">
-                            <div class="mb-0">
-                                <label class="checkout-label" for="upiId">UPI ID</label>
-                                <input type="text" id="upiId" class="checkout-input" placeholder="yourname@upi">
-                            </div>
-                        </div>
-
-                        <div class="payment-option" id="payCard" data-method="card">
-                            <div class="payment-option-radio">
-                                <div class="radio-dot"></div>
-                            </div>
-                            <div class="payment-option-info">
-                                <span class="payment-option-label">Credit / Debit Card</span>
-                            </div>
-                            <div class="payment-logos">
-                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/visa.svg" alt="Visa"
-                                    class="payment-logo">
-                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/mastercard.svg"
-                                    alt="Mastercard" class="payment-logo">
-                                <img src="https://cdn.jsdelivr.net/npm/payment-icons@1.1.0/min/flat/rupay.svg"
-                                    alt="RuPay" class="payment-logo">
-                            </div>
-                        </div>
-
-                        <div class="payment-details-panel d-none" id="cardPanel">
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="checkout-label" for="cardNumber">Card number</label>
-                                    <input type="text" id="cardNumber" class="checkout-input"
-                                        placeholder="1234 5678 9012 3456" maxlength="19">
-                                </div>
-                                <div class="col-12">
-                                    <label class="checkout-label" for="cardName">Name on card</label>
-                                    <input type="text" id="cardName" class="checkout-input" placeholder="Full name">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="checkout-label" for="expiry">Expiry date</label>
-                                    <input type="text" id="expiry" class="checkout-input" placeholder="MM / YY"
-                                        maxlength="7">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="checkout-label" for="cvv">Security code (CVV)</label>
-                                    <input type="password" id="cvv" class="checkout-input" placeholder="•••"
-                                        maxlength="4">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div> -->
 
                     <!-- Place Order Button (mobile visible) -->
-                    <button class="btn-place-order w-100 d-lg-none" id="placeOrderMobile">
-                        Place Order · RS. 1,333.00
+                    <button type="submit" class="btn-place-order w-100 d-lg-none" id="placeOrderMobile">
+                        Place Order · RS.{{ cart.total_amount|floatformat:2 }}
                         <i class="bi bi-arrow-right ms-2"></i>
                     </button>
 
                     <!-- Back to cart -->
-                    <a href="cart.html" class="checkout-back-link">
+                    <a href="{% url 'cart' %}" class="checkout-back-link">
                         <i class="bi bi-arrow-left me-1"></i> Return to cart
                     </a>
 
@@ -454,44 +386,23 @@
 
                         <div class="checkout-summary-items">
 
-                            <div class="checkout-summary-item">
-                                <div class="summary-item-img-wrap">
-                                    <img src="https://picsum.photos/id/20/300/300" alt="Product"
-                                        class="summary-item-img">
-                                    <span class="summary-item-qty-badge">2</span>
-                                </div>
-                                <div class="summary-item-info">
-                                    <p class="summary-item-name">LSU PURPLE Fig Tissue Culture Plants "Ficus carica"</p>
-                                    <p class="summary-item-variant">Size: 1 Quart 1–1.5ft</p>
-                                </div>
-                                <p class="summary-item-price">RS. 778.00</p>
-                            </div>
+       
+
+                            {% for item in cart_items %}
 
                             <div class="checkout-summary-item">
                                 <div class="summary-item-img-wrap">
-                                    <img src="https://picsum.photos/id/22/300/300" alt="Product"
+                                    <img src="{{ item.product.main_image.url }}" alt="Product"
                                         class="summary-item-img">
-                                    <span class="summary-item-qty-badge">1</span>
+                                    <span class="summary-item-qty-badge">{{ item.quantity }}</span>
                                 </div>
                                 <div class="summary-item-info">
-                                    <p class="summary-item-name">KINOW MANDARIN (GRAFTED) - Citrus Fruit Plants</p>
-                                    <p class="summary-item-variant">Size: Standard Pot</p>
+                                    <p class="summary-item-name">{{ item.product.title }}</p>
+                                    <p class="summary-item-variant">Quantity: {{ item.quantity }}</p>
                                 </div>
-                                <p class="summary-item-price">RS. 245.00</p>
+                                <p class="summary-item-price">RS. {{ item.subtotal|floatformat:2 }}</p>
                             </div>
-
-                            <div class="checkout-summary-item">
-                                <div class="summary-item-img-wrap">
-                                    <img src="https://picsum.photos/id/25/300/300" alt="Product"
-                                        class="summary-item-img">
-                                    <span class="summary-item-qty-badge">1</span>
-                                </div>
-                                <div class="summary-item-info">
-                                    <p class="summary-item-name">GRAPEFRUIT (GRAFTED) - Citrus Fruit Plants & Tree</p>
-                                    <p class="summary-item-variant">Size: 2 Quart 1.5–2ft</p>
-                                </div>
-                                <p class="summary-item-price">RS. 310.00</p>
-                            </div>
+                            {% endfor %}
 
                         </div>
 
@@ -506,11 +417,11 @@
 
                         <div class="checkout-total-row">
                             <span>Subtotal</span>
-                            <span>RS. 1,333.00</span>
+                            <span>RS {{ cart.total_amount|floatformat:2 }}</span>
                         </div>
                         <div class="checkout-total-row">
                             <span>Shipping</span>
-                            <span class="free-tag">FREE</span>
+                            <span id="shipping-charge" class="free-tag">FREE</span>
                         </div>
 
                         <div class="checkout-summary-divider"></div>
@@ -520,10 +431,10 @@
                                 <p class="grand-total-label">Total</p>
                                 <p class="grand-total-note">Including all taxes</p>
                             </div>
-                            <p class="grand-total-amount">RS. 1,333.00</p>
+                            <p id="grand-total" class="grand-total-amount">RS. {{ cart.total_amount|floatformat:2 }}</p>
                         </div>
 
-                        <button class="btn-place-order w-100 d-none d-lg-flex" id="placeOrderDesktop">
+                        <button type="submit" class="btn-place-order w-100 d-none d-lg-flex" id="placeOrderDesktop">
                             Place Order
                             <i class="bi bi-arrow-right ms-2"></i>
                         </button>
@@ -535,6 +446,8 @@
                 </div>
 
             </div>
+            </form>
+
         </div>
     </section>
 
@@ -672,23 +585,46 @@
 
 
 
-        document.getElementById('state').addEventListener('change', function() {
-            const selectedState = this.value;
-            const citySelect = document.getElementById('city');
-            citySelect.innerHTML = '';
+        // document.getElementById('state').addEventListener('change', function() {
+        //     const selectedState = this.value;
+        //     const citySelect = document.getElementById('city');
+        //     citySelect.innerHTML = '';
             
-            if (selectedState === 'Maharashtra') {
-                const cities = ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Thane'];
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    citySelect.appendChild(option);
-                });
-            }
+        //     if (selectedState === 'Maharashtra') {
+        //         const cities = ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Thane'];
+        //         cities.forEach(city => {
+        //             const option = document.createElement('option');
+        //             option.value = city;
+        //             option.textContent = city;
+        //             citySelect.appendChild(option);
+        //         });
+        //     }
+        // });
+
+
+
+
+        document.getElementById("state").addEventListener("change", function(){
+
+            let stateId = this.value;
+
+            fetch(`/calculate-shipping/?state_id=${stateId}`)
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById("shipping-charge").innerText = "RS. " + data.shipping;
+
+                // document.getElementById("subtotal").innerText = "RS. " + data.subtotal;
+
+                document.getElementById("grand-total").innerText = "RS. " + data.total;
+                document.getElementById("placeOrderMobile").innerText = "PLACE ORDER · RS. " + data.total;
+
+
+                
+
+            });
+
         });
-
-
 
 
 

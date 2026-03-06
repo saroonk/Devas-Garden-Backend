@@ -238,6 +238,7 @@ class Product(models.Model):
         null=True
     )
     is_featured = models.BooleanField(default=False)  # For homepage featured products
+    stock = models.PositiveIntegerField(default=0)
     # Basic Info
     title = models.CharField(max_length=255,blank=True)
     short_description = models.TextField(blank=True)
@@ -290,6 +291,56 @@ class Cart(models.Model):
         return sum(item.subtotal for item in self.cartitem_set.all())
 
 
+    def calculate_shipping(self, state):
+
+        zone = state.zone
+
+        shipping_total = Decimal("0.00")
+        subtotal = Decimal("0.00")
+        total_quantity = 0
+
+        cart_items = self.cartitem_set.select_related("product")
+
+        for item in cart_items:
+
+            subtotal += item.product.new_price * item.quantity
+            total_quantity += item.quantity
+
+            charge = ProductDeliveryCharge.objects.filter(
+                product=item.product,
+                zone=zone
+            ).first()
+
+            if charge:
+                shipping_total += charge.charge * item.quantity
+
+        if total_quantity >= 50:
+            shipping_total = Decimal("0.00")
+
+        elif total_quantity >= 35:
+            shipping_total -= shipping_total * Decimal("0.50")
+
+        elif total_quantity >= 25:
+            shipping_total -= shipping_total * Decimal("0.40")
+
+        elif total_quantity >= 15:
+            shipping_total -= shipping_total * Decimal("0.35")
+
+        elif total_quantity >= 10:
+            shipping_total -= shipping_total * Decimal("0.25")
+
+        elif total_quantity >= 5:
+            shipping_total -= shipping_total * Decimal("0.15")
+
+        total = subtotal + shipping_total
+
+        return {
+            "subtotal": subtotal,
+            "shipping": shipping_total,
+            "total": total
+        }
+
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -297,6 +348,8 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = ('cart', 'product')
+
+
 
     def __str__(self):
         return f"{self.quantity} x {self.product.title}"
@@ -379,7 +432,7 @@ class ProductDeliveryCharge(models.Model):
 
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, blank=True)
     session_id = models.CharField(max_length=255, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE,blank=True, null=True)
     added_at = models.DateTimeField(auto_now_add=True)
@@ -389,3 +442,98 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user.username}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Order(models.Model):
+
+    STATUS_CHOICES = (
+        ("pending","Pending"),
+        ("processing","Processing"),
+        ("on_the_way","On The Way"),
+        ("delivered","Delivered"),
+    )
+
+    PAYMENT_STATUS = (
+        ("pending","Pending"),
+        ("paid","Paid"),
+        ("failed","Failed"),
+    )
+
+    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
+
+    address1 = models.CharField(max_length=255)
+    address2 = models.CharField(max_length=255,blank=True)
+
+    city = models.CharField(max_length=100)
+    state = models.ForeignKey(State,on_delete=models.SET_NULL,null=True)
+
+    pincode = models.CharField(max_length=10)
+    phone = models.CharField(max_length=15)
+
+    subtotal = models.DecimalField(max_digits=10,decimal_places=2)
+    shipping_charge = models.DecimalField(max_digits=10,decimal_places=2)
+    total = models.DecimalField(max_digits=10,decimal_places=2)
+
+    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default="pending")
+
+
+    payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS,default="pending")
+
+    razorpay_order_id = models.CharField(max_length=200,null=True,blank=True)
+    razorpay_payment_id = models.CharField(max_length=200,null=True,blank=True)
+    razorpay_signature = models.CharField(max_length=500,null=True,blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.id}"
+
+
+
+class OrderItem(models.Model):
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="items"
+    )
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    quantity = models.PositiveIntegerField()
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    total_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    def __str__(self):
+        return f"{self.product} x {self.quantity}"
+    
+    @property
+    def subtotal(self):
+        return self.price * self.quantity

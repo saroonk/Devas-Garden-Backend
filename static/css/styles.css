@@ -307,6 +307,23 @@ body {
     border: 2px solid var(--white);
 }
 
+.wish-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--track-yellow);
+    color: var(--primary-green);
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--white);
+}
+
 /* Track Your Order Button */
 .btn-track {
     background-color: var(--track-yellow);
@@ -1046,7 +1063,7 @@ body.mob-nav-open {
     font-size: 14px;
     line-height: 1.4;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     height: 40px;
     overflow: hidden;
     display: -webkit-box;

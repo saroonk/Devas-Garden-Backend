@@ -1,0 +1,28 @@
+{% for product in page_obj %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="product-card" data-url="{% url 'productdetails' product.slug %}">
+                        <div class="product-img-wrapper position-relative">
+                            <img src="{{ product.main_image.url }}" alt="{{ product.title }}" class="product-img">
+                            <span class="product-badge">{% if product.subcategory %}{{ product.subcategory.name|title }}{% else %}{{ product.category.name|title }}{% endif %}</span>
+                            <!-- <span class="product-badge">{{ product.category.name|upper }}<i class="bi bi-arrow-right"></i>{{ product.subcategory.name|upper }}</span> -->
+
+
+
+                        </div>
+                        <div class="product-info mt-3">
+                            <h6 class="product-name">{{ product.title }}</h6>
+                            <div class="price-container d-flex align-items-center gap-2">
+                                <span class="current-price">RS {{ product.new_price }}</span>
+                                <span class="old-price">RS {{ product.old_price }}</span>
+                            </div>
+                            {% if product.stock > 0 %}
+                                <a data-product-id="{{ product.id }}" class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none">Add to cart</a>
+                            {% else %}
+                                <a class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none" disabled>Out of Stock</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                    <p>No products found.</p>
+                {% endfor %}

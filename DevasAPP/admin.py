@@ -143,3 +143,21 @@ class ProductAdmin(BaseAdmin):
 
 
 admin.site.register(Product, ProductAdmin)
+
+
+
+@admin.register(Wishlist)
+class WishlistAdmin(BaseAdmin):
+    list_display = ("product",)
+    
+
+
+@admin.register(Order)
+class OrderAdmin(BaseAdmin):
+    list_display = ("id", "user", "email", "first_name", "last_name", "total", "created_at","status","payment_status")
+    search_fields = ("user__username", "email", "first_name", "last_name")
+
+@admin.register(OrderItem)
+class OrderItemAdmin(BaseAdmin):    
+    list_display = ("order", "product", "quantity", "price","total_price")
+    search_fields = ("order__id", "product__name")

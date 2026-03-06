@@ -6,7 +6,9 @@ urlpatterns = [
     path('bloglisting/', views.bloglisting, name='bloglisting'),
     path('blogdetails/<slug:slug>/', views.blogdetails, name='blogdetails'),
     path('cart/', views.cart, name='cart'),
+
     path('checkout/', views.checkout, name='checkout'),
+
     path('contactus/', views.contactus, name='contactus'),
     path('privacypolicy/', views.privacypolicy, name='privacypolicy'),
     path('productdetails/<slug:slug>/', views.productdetails, name='productdetails'),
@@ -32,5 +34,14 @@ urlpatterns = [
     path('search/', views.search, name='search'),
 
     path('add-to-wishlist/', views.add_to_wishlist, name='add_to_wishlist'),
+
+
+    path('calculate-shipping/', views.calculate_shipping, name='calculate_shipping'),
+
+    path("place-order/",views.place_order,name="place_order"),
+    path("payment-success/",views.payment_success,name="payment_success"),
+    path("order-success/",views.order_success,name="order_success"),
+
+
 
 ]

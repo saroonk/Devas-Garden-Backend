@@ -120,11 +120,18 @@
                     <button class="nav-icon-btn me-2" id="searchBtnMobile">
                         <i class="bi bi-search"></i>
                     </button>
-                    <div class="position-relative me-3">
-                        <button class="nav-icon-btn">
+                   <div class="position-relative me-2 ">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn">
                             <i class="bi bi-bag"></i>
-                        </button>
+                        </a>
                         <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
+                    </div>
+
+                    <div class="position-relative me-3">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
                     </div>
                     <!-- Custom hamburger — opens right drawer -->
                     <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
@@ -183,6 +190,14 @@
                         <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
 
                     </div>
+
+                                        <div class="position-relative ">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
+                    </div>
+
                     {% if request.user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
                     {% else %}
@@ -241,56 +256,68 @@
         {% endif %}
     </section>
 
+
+
+
+    <form id="filterForm"
+      hx-get="{% url 'products' %}"
+      hx-target=".products-grid-section .row"
+      hx-trigger="change"
+      hx-push-url="true">
     <section class="products-filter-bar d-none d-md-block">
         <div class="container">
             <div class="filter-bar-inner d-flex align-items-center justify-content-between">
                 <!-- Left: Filter Dropdowns -->
+            
                 <div class="filter-left d-flex align-items-center gap-4">
                     <span class="filter-label">Filter:</span>
 
                     <!-- Availability Dropdown -->
                     <div class="filter-dropdown">
-                        <button class="filter-dropdown-btn" id="availabilityBtn">
+                        <button type="button" class="filter-dropdown-btn" id="availabilityBtn">
                             Availability <i class="bi bi-chevron-down"></i>
                         </button>
                         <div class="filter-dropdown-menu" id="availabilityMenu">
                             <label class="filter-check-item">
-                                <input type="checkbox" value="in-stock"> In Stock
+                                <input type="checkbox" name="availability" value="in-stock"> In Stock
                             </label>
                             <label class="filter-check-item">
-                                <input type="checkbox" value="out-of-stock"> Out Of Stock
+                                <input type="checkbox" name="availability" value="out-of-stock"> Out Of Stock
                             </label>
                         </div>
                     </div>
 
                     <!-- Price Dropdown -->
                     <div class="filter-dropdown">
-                        <button class="filter-dropdown-btn" id="priceBtn">
+                        <button type="button" class="filter-dropdown-btn" id="priceBtn">
                             Price <i class="bi bi-chevron-down"></i>
                         </button>
                         <div class="filter-dropdown-menu" id="priceMenu">
                             <label class="filter-check-item">
-                                <input type="checkbox" value="0-500"> RS 0 – RS 500
+                                <input type="checkbox" name="price" value="0-500"> RS 0 – RS 500
                             </label>
                             <label class="filter-check-item">
-                                <input type="checkbox" value="500-1000"> RS 500 – RS 1,000
+                                <input type="checkbox" name="price" value="500-1000"> RS 500 – RS 1,000
                             </label>
                             <label class="filter-check-item">
-                                <input type="checkbox" value="1000+"> RS 1,000+
+                                <input type="checkbox" name="price" value="1000+"> RS 1,000+
                             </label>
                         </div>
                     </div>
+                    
                 </div>
 
                 <!-- Right: Sort + Count -->
                 <div class="filter-right d-flex align-items-center gap-3">
                     <div class="sort-group d-flex align-items-center gap-2">
                         <span class="sort-label">Sort by:</span>
-                        <select class="sort-select">
-                            <option value="best-selling">Best selling</option>
+                        <select name="sort" class="sort-select">
+                            <option value="newest">Newest</option>
+
                             <option value="price-asc">Price: Low to High</option>
                             <option value="price-desc">Price: High to Low</option>
-                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+
                         </select>
                     </div>
                     <span class="products-count">{{productscount}} products</span>
@@ -301,6 +328,7 @@
             </div>
         </div>
     </section>
+    </form>
 
 
     <!-- ====== MOBILE FILTER BAR (Shows filter button + count) ====== -->
@@ -317,11 +345,17 @@
 
     <!-- ====== MOBILE FILTER DRAWER ====== -->
     <div class="mobile-filter-overlay" id="mobileFilterOverlay"></div>
+
+    <form id="filterForm"
+      hx-get="{% url 'products' %}"
+      hx-target=".products-grid-section .row"
+      hx-trigger="change"
+      hx-push-url="true">
     <div class="mobile-filter-drawer" id="mobileFilterDrawer">
         <div class="drawer-header">
             <div>
                 <p class="drawer-title">Filter and sort</p>
-                <p class="drawer-count">23 products</p>
+                <p class="drawer-count">{{productscount}} products</p>
             </div>
             <button class="drawer-close-btn" id="drawerCloseBtn">
                 <i class="bi bi-x-lg"></i>
@@ -331,46 +365,50 @@
         <div class="drawer-body">
             <!-- Availability -->
             <div class="drawer-section">
-                <button class="drawer-section-btn" data-target="drawerAvailability">
+                <button type="button" class="drawer-section-btn" data-target="drawerAvailability">
                     Availability <i class="bi bi-chevron-down"></i>
                 </button>
                 <div class="drawer-section-content" id="drawerAvailability">
                     <label class="filter-check-item">
-                        <input type="checkbox" value="in-stock"> In Stock
+                        <input type="checkbox" name="availability" value="in-stock"> In Stock
                     </label>
                     <label class="filter-check-item">
-                        <input type="checkbox" value="out-of-stock"> Out Of Stock
+                        <input type="checkbox" name="availability" value="out-of-stock"> Out Of Stock
                     </label>
                 </div>
             </div>
 
             <!-- Price -->
             <div class="drawer-section">
-                <button class="drawer-section-btn" data-target="drawerPrice">
+                <button type="button" class="drawer-section-btn" data-target="drawerPrice">
                     Price <i class="bi bi-chevron-down"></i>
                 </button>
                 <div class="drawer-section-content" id="drawerPrice">
                     <label class="filter-check-item">
-                        <input type="checkbox" value="0-500"> RS 0 – RS 500
+                        <input type="checkbox" name="price" value="0-500"> RS 0 – RS 500
                     </label>
                     <label class="filter-check-item">
-                        <input type="checkbox" value="500-1000"> RS 500 – RS 1,000
+                        <input type="checkbox" name="price" value="500-1000"> RS 500 – RS 1,000
                     </label>
                     <label class="filter-check-item">
-                        <input type="checkbox" value="1000+"> RS 1,000+
+                        <input type="checkbox" name="price" value="1000+"> RS 1,000+
                     </label>
                 </div>
             </div>
+
+
 
             <!-- Sort By -->
             <div class="drawer-section">
                 <div class="drawer-sort-row">
                     <span class="drawer-sort-label">Sort by:</span>
-                    <select class="sort-select drawer-sort-select">
-                        <option value="best-selling">Best selling</option>
+                    <select name="sort" class="sort-select drawer-sort-select">
+                        <option value="newest">Newest</option>
+
                         <option value="price-asc">Price: Low to High</option>
                         <option value="price-desc">Price: High to Low</option>
-                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+
                     </select>
                 </div>
             </div>
@@ -381,6 +419,7 @@
             <button class="drawer-apply-btn" id="drawerApply">Apply</button>
         </div>
     </div>
+    </form>
 
 
 
@@ -388,7 +427,7 @@
 
     <section class="products-grid-section py-4">
         <div class="container">
-            <div class="row g-md-4 g-3">
+            <div class="row g-md-4 g-3" id="productGrid">
 
                 <!-- {% for product in products %}
                 <div class="col-xl-3 col-lg-4 col-md-6 col-6">
@@ -410,29 +449,8 @@
                 {% endfor %} -->
 
 
-
-                {% for product in page_obj %}
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="{% url 'productdetails' product.slug %}">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="{{ product.main_image.url }}" alt="{{ product.title }}" class="product-img">
-                            <span class="product-badge">{% if product.subcategory %}{{ product.subcategory.name|title }}{% else %}{{ product.category.name|title }}{% endif %}</span>
-                            <!-- <span class="product-badge">{{ product.category.name|upper }}<i class="bi bi-arrow-right"></i>{{ product.subcategory.name|upper }}</span> -->
-
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">{{ product.title }}</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS {{ product.new_price }}</span>
-                                <span class="old-price">RS {{ product.old_price }}</span>
-                            </div>
-                            <a data-product-id="{{ product.id }}" class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none">Add to cart</a>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                    <p>No products found.</p>
-                {% endfor %}
+                {% include 'partial/products.html' %}
+                
 
                 
             </div>
@@ -454,7 +472,11 @@
                 <!-- Previous Button -->
                 {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    <!-- <a class="page-link" href="?page={{ page_obj.previous_page_number }}"> -->
+                        <a class="page-link"
+   hx-get="?page={{ num }}"
+   hx-target="#productGrid"
+   hx-push-url="true">
                         <i class="bi bi-chevron-left"></i>
                     </a>
                 </li>
@@ -582,6 +604,7 @@
     <!-- Bootstrap JS & Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/script.js' %}" defer></script>    
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
 
 
@@ -648,34 +671,54 @@ addtocartbtn.forEach(el => {
 
 
 
-        // ---- Desktop filter dropdowns ----
+        // document.querySelectorAll('.filter-dropdown-btn').forEach(btn => {
+        //     btn.addEventListener('click', function (e) {
+        //         e.stopPropagation();
+        //         const menu = this.nextElementSibling;
+        //         const isOpen = menu.classList.contains('open');
+        //         document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.remove('open'));
+        //         document.querySelectorAll('.filter-dropdown-btn').forEach(b => b.classList.remove('active'));
+        //         if (!isOpen) {
+        //             menu.classList.add('open');
+        //             this.classList.add('active');
+        //         }
+        //     });
+        // });
+        // document.addEventListener('click', () => {
+        //     document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.remove('open'));
+        //     document.querySelectorAll('.filter-dropdown-btn').forEach(b => b.classList.remove('active'));
+        // });
+
+
+
         document.querySelectorAll('.filter-dropdown-btn').forEach(btn => {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
+
                 const menu = this.nextElementSibling;
                 const isOpen = menu.classList.contains('open');
-                // close all
+
                 document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.remove('open'));
-                document.querySelectorAll('.filter-dropdown-btn').forEach(b => b.classList.remove('active'));
+
                 if (!isOpen) {
                     menu.classList.add('open');
-                    this.classList.add('active');
                 }
             });
         });
+
+        document.querySelectorAll('.filter-dropdown-menu').forEach(menu => {
+            menu.addEventListener('click', function(e){
+                e.stopPropagation();
+            });
+        });
+
         document.addEventListener('click', () => {
             document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.remove('open'));
-            document.querySelectorAll('.filter-dropdown-btn').forEach(b => b.classList.remove('active'));
         });
 
 
 
-        // for form auto submit
-        // document.querySelectorAll(".filter-dropdown-menu input").forEach(checkbox => {
-        //     checkbox.addEventListener("change", () => {
-        //         document.querySelector(".filter-bar-inner form").submit();
-        //     });
-        // });
+
 
         // document.querySelectorAll('.filter-check-item input')
         //     .forEach(input => {

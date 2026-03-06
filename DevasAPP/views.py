@@ -21,6 +21,11 @@ from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 
 
+import json
+import razorpay
+from django.conf import settings
+
+# client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 def get_or_create_cart(request):
     """
@@ -185,7 +190,54 @@ def cart(request):
 
 
 def checkout(request):
-    return render(request, 'checkout.html')
+
+    cart = get_or_create_cart(request)
+
+    cart_items = cart.cartitem_set.select_related('product')
+
+    states = State.objects.all()
+
+    # print("Checkout page loaded ----------------------------")
+
+    for item in cart_items:
+
+        if item.product.stock < item.quantity:
+
+            messages.error(
+                request,
+                f"Sorry! Only {item.product.stock} units of '{item.product.title}' are available."
+            )
+
+            return redirect('cart')
+
+    context = {
+        "cart": cart,
+        "cart_items": cart_items
+        ,"states": states
+    }
+
+    return render(request, 'checkout.html', context)
+
+
+
+from decimal import Decimal
+
+def calculate_shipping(request):
+
+    state_id = request.GET.get("state_id")
+
+    cart = get_or_create_cart(request)
+
+    state = State.objects.get(id=state_id)
+
+    data = cart.calculate_shipping(state)
+
+    return JsonResponse({
+        "shipping": float(data["shipping"]),
+        "subtotal": float(data["subtotal"]),
+        "total": float(data["total"])
+    })
+
 
 
 
@@ -243,9 +295,12 @@ def productdetails(request, slug):
     featured_products = Product.objects.filter(is_featured=True).exclude(id=product.id)[:4]
     return render(request, 'productdetails.html', {'product': product, 'featured_products': featured_products,"in_wishlist": in_wishlist   })
 
+
+
+
+from .filter import ProductFilter
 def products(request, slug=None):
 
-   
 
 
     products = (
@@ -270,6 +325,8 @@ def products(request, slug=None):
             selected_subcategory = subcategory
             products = products.filter(subcategory=subcategory)
 
+    product_filter = ProductFilter(request.GET, queryset=products)
+    products = product_filter.qs
 
     paginator = Paginator(products,50)
     page_number = request.GET.get("page")
@@ -277,10 +334,15 @@ def products(request, slug=None):
     productscount = products.count()
     context = {
         "page_obj": page_obj,
+        "product_filter": product_filter,
         "selected_category": selected_category,
         "selected_subcategory": selected_subcategory,
             "productscount": productscount
     }
+
+
+    if request.htmx:
+        return render(request, "partial/products.html", context)
 
     return render(request, "products.html", context)
 
@@ -431,6 +493,7 @@ def add_to_wishlist(request):
             user=request.user,
             product=product
         ).first()
+        print("User is authenticated. Checking wishlist for user.")
     else:
         if not request.session.session_key:
             request.session.create()
@@ -439,26 +502,42 @@ def add_to_wishlist(request):
             session_id=request.session.session_key,
             product=product
         ).first()
+        print("User is not authenticated. Checking wishlist for session.")
 
     if wishlist_item:
         wishlist_item.delete()
         status = "removed"
+        print(f"Product {product.title} removed from wishlist.")
     else:
         if request.user.is_authenticated:
             Wishlist.objects.create(
                 user=request.user,
                 product=product
             )
+            print(f"Product {product.title} added to wishlist for user {request.user.username}.")
         else:
             Wishlist.objects.create(
                 session_id=request.session.session_key,
                 product=product
             )
         status = "added"
+        print(f"Product {product.title} added to wishlist for session {request.session.session_key}.")  
+    
+    if request.user.is_authenticated:
+        wishlist_count = Wishlist.objects.filter(user=request.user).count()
+    else:
+        wishlist_count = Wishlist.objects.filter(
+            session_id=request.session.session_key
+        ).count()
+    print(f"Received wishlist request for product ID: {product_id}")
 
     return JsonResponse({
+        'success': True,
         'status': status,
+        'wishlist_count': wishlist_count
     })
+
+
 def search(request):
     query = request.GET.get('q', '')
     products = Product.objects.filter(title__icontains=query)
@@ -476,3 +555,223 @@ def search(request):
         'search_query': search_query
     }
     return render(request, 'products.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+import traceback
+def place_order(request):
+
+    cart = get_or_create_cart(request)
+    cart_items = cart.cartitem_set.select_related("product")
+
+    for item in cart_items:
+
+        if item.product.stock < item.quantity:
+
+            messages.error(
+                request,
+                f"Sorry! Only {item.product.stock} units of '{item.product.title}' are available."
+            )
+
+            return redirect('cart')
+
+    if request.method == "POST":
+
+        first_name = request.POST.get("firstName")
+        last_name = request.POST.get("lastName")
+        address = request.POST.get("address")
+        address2 = request.POST.get("address2")
+        city = request.POST.get("city")
+        state_id = request.POST.get("state")
+        pincode = request.POST.get("pincode")
+        phone = request.POST.get("phone")
+        email = request.POST.get("email")
+
+
+
+        state = State.objects.get(id=state_id)
+
+        data = cart.calculate_shipping(state)
+
+        subtotal = data["subtotal"]
+        shipping = data["shipping"]
+        total = data["total"]
+
+        order = Order.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            address1=address,
+            address2=address2,
+            city=city,
+            state=state,
+            pincode=pincode,
+            phone=phone,
+            subtotal=subtotal,
+            shipping_charge=shipping,
+            total=total
+        )
+
+        for item in cart_items:
+
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.new_price,
+                total_price=item.product.new_price * item.quantity
+            )
+
+
+        print("==========================================order created with total:", order.total )
+
+
+        print("===========================================Initiating Razorpay payment for order:", order.id, "with amount:", total)
+
+        # Razorpay order create
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+        print("Razorpay client initialized with key:", settings.RAZORPAY_KEY_ID)
+        print("Creating Razorpay order with amount (in paise):", int(total * 100))
+        print(client)
+        print("-----------------------------------------------")
+        print("-----------------------------------------------")
+        print("-----------------------------------------------")
+        print("-----------------------------------------------")
+        print("-----------------------------------------------")
+        print("KEY:", settings.RAZORPAY_KEY_ID)
+        print("SECRET:", settings.RAZORPAY_KEY_SECRET)
+
+        try:
+            payment = client.order.create({
+            "amount": int(total * 100),
+            "currency": "INR",
+            "payment_capture": "1"
+        })
+            # razorpay_order = client.order.create({
+            #     "amount": int(total * 100),  
+            #     "currency": "INR",
+            #     "payment_capture": 1
+            #     })
+        except Exception as e:
+            print("RAZORPAY ERROR:")
+            traceback.print_exc()
+
+            messages.error(request, "There was an error initiating payment. Please try again.")
+            return redirect('checkout')
+
+        print("Razorpay order created:---------------------------------", payment)
+
+
+
+
+
+
+        order.razorpay_order_id = payment["id"]
+        order.save()
+
+        context = {
+            "order": order,
+            "payment": payment,
+            "razorpay_key": settings.RAZORPAY_KEY_ID
+        }
+
+        return render(request,"payment.html",context)
+
+
+
+
+# def payment_success(request):
+
+#     data = json.loads(request.body)
+
+#     razorpay_order_id = data["razorpay_order_id"]
+#     razorpay_payment_id = data["razorpay_payment_id"]
+
+#     order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+
+#     order.payment_status = "paid"
+#     order.razorpay_payment_id = razorpay_payment_id
+#     order.status = "processing"
+
+#     order.save()
+
+
+
+#     for item in order.items.all():
+
+#         product = item.product
+#         product.stock -= item.quantity
+#         product.save()
+
+  
+#     cart = get_or_create_cart(request)
+#     cart.cartitem_set.all().delete()
+
+#     return JsonResponse({"status":"success"})
+
+
+
+
+from django.db import transaction
+
+@transaction.atomic
+def payment_success(request):
+
+    data = json.loads(request.body)
+
+    razorpay_order_id = data["razorpay_order_id"]
+    razorpay_payment_id = data["razorpay_payment_id"]
+    razorpay_signature = data["razorpay_signature"]
+
+    client = razorpay.Client(
+        auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+    )
+
+    try:
+
+        client.utility.verify_payment_signature({
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature
+        })
+
+    except:
+
+        return JsonResponse({"status": "payment_failed"})
+
+    order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+
+    order.payment_status = "paid"
+    order.razorpay_payment_id = razorpay_payment_id
+    order.razorpay_signature = razorpay_signature
+    order.status = "processing"
+
+    order.save()
+
+    for item in order.items.all():
+
+        product = item.product
+        product.stock -= item.quantity
+        product.save()
+
+  
+    cart = get_or_create_cart(request)
+    cart.cartitem_set.all().delete()
+
+    return JsonResponse({"status":"success"})
+
+def order_success(request):
+
+    return render(request,"order_success.html")
