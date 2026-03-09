@@ -7,6 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order  - Deva's Garden</title>
+    <meta name="description" content="Track your Deva's Garden order easily. Enter your order details to check the latest delivery status of your plants and gardening products.">
+
+    <meta property="og:title" content="Track Your Order | Deva's Garden">
+    <meta property="og:description" content="Check the delivery status of your Deva's Garden order quickly and easily.">
+
+    <link rel="icon" href="{% static 'images/Group6.png' %}">
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -19,7 +26,10 @@
     <!-- Shared CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Cart CSS -->
-    <link rel="stylesheet" href="{% static 'css/trackorder.css' %}">
+    <link rel="stylesheet" href="{% static 'css/trackorders.css' %}">
+
+
+
 </head>
 
 <body>
@@ -226,101 +236,143 @@
 
 
     <!-- WhatsApp Float -->
-    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
-        <i class="bi bi-whatsapp"></i>
-    </a>
+<a href="https://wa.me/918089530886" target="_blank" class="whatsapp-float">
+    <i class="bi bi-whatsapp"></i>
+</a>
 
 
 
 
 
+<div class="position-fixed top-0 start-50 translate-middle-x p-3"
+     style="z-index: 9999; width: 100%; max-width: 600px;">
+
+{% if messages %}
+  {% for message in messages %}
+    
+    <div class="alert 
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% elif message.tags == 'success' %}
+            alert-success
+        {% else %}
+            alert-primary
+        {% endif %}
+        alert-dismissible fade show shadow"
+        role="alert">
+
+        {{ message }}
+
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert"></button>
+    </div>
+
+  {% endfor %}
+{% endif %}
+</div>
 
 
+
+
+{% if not request.user.is_authenticated %}
+<section class="track-order-section py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="card shadow-sm border-0 track-card text-center p-4">
+
+                    <h3 class="mb-3 track-title">Track Your Order</h3>
+
+                    <p class="text-muted mb-4">
+                        Enter the email address you used when placing your order to check its status.
+                    </p>
+
+                    <form action="{% url 'trackorder' %}" method="GET" class="input-group track-input-group">
+                        <input 
+                            type="email" 
+                            class="form-control" 
+                            placeholder="Enter your order email address"
+                            name="trackmail"
+                            id="trackInput"
+                        >
+
+                        <button class="btn btn-tracks" id="trackBtn">
+                            Track Order
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endif %}
 
 
 
   <section class="track-section py-5">
     <div class="container">
+                    <p class="text-muted text-sm">Total Orders : {{order_count}}</p>
 
-        <!-- ORDER CARD 1 -->
-        <div class="order-card">
-
-            <!-- Order Header -->
-            <div class="order-header">
-                <div>
-                    <div class="order-id">Order #1025</div>
-                    <div class="order-meta">Placed on Feb 25, 2026 • 3 Items</div>
-                </div>
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">ORDER ID - {{ order.id }}</div>
+                            <div class="order-meta">Placed on {{ order.created_at|date:"M d, Y" }} • {{ order.items.count }} Items</div>
+                        </div>
 
                 <span class="status-badge status-delivered">
-                    <i class="bi bi-check-circle-fill me-1"></i> Delivered
+                    <i class="bi bi-check-circle-fill me-1"></i> {{ order.status }}
                 </span>
             </div>
 
-            <!-- Order Items -->
+            {% for item in order.items.all %}
             <div class="order-item">
-                <img src="https://images.unsplash.com/photo-1545239351-ef35f43d514b?auto=format&fit=crop&q=80&w=200" class="product-img">
+                <img src="{{ item.product.main_image.url }}" class="product-img">
                 <div class="item-details">
-                    <h6>Monstera Deliciosa</h6>
-                    <p>Qty: 1 • $45.00</p>
+                    <h6>{{ item.product.title }}</h6>
+                    <p>Qty: {{ item.quantity }} • Rs.{{ item.price|floatformat:2 }}</p>
                 </div>
             </div>
+            {% endfor %}
 
-            <div class="order-item">
-                <img src="https://images.unsplash.com/photo-1520412099561-648319766591?auto=format&fit=crop&q=80&w=200" class="product-img">
-                <div class="item-details">
-                    <h6>Snake Plant Zeylanica</h6>
-                    <p>Qty: 2 • $72.00</p>
-                </div>
-            </div>
+            
 
-            <!-- Order Footer -->
             <div class="order-footer">
-                <div class="order-total">
-                    Total: $117.00
+
+               
+
+                <div class="order-total ">
+                    <!-- <p>Shipping: RS.{{ order.shipping_charge|floatformat:2 }}</p> -->
+
+                    Total: <strong>RS.{{ order.total|floatformat:2 }}</strong>
                 </div>
+
+                {% if order.status == "delivered" %}
 
                 <button class="btn-return" data-bs-toggle="modal" data-bs-target="#returnModal">
                     Return Items
                 </button>
+                {% endif %}
             </div>
 
         </div>
+        {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-bag-x display-1 text-muted"></i>
+                <h4 class="mt-3">No orders found</h4>
+                <p class="text-muted">Looks like you haven't placed any orders yet.</p>
+                <a href="{% url 'products' %}" class="btn btn-track mt-3">Shop Now</a>
+        {% endif %}
 
 
-        <!-- ORDER CARD 2 (In Transit Example) -->
-        <div class="order-card">
-
-            <div class="order-header">
-                <div>
-                    <div class="order-id">Order #1026</div>
-                    <div class="order-meta">Placed on Feb 27, 2026 • 2 Items</div>
-                </div>
-
-                <span class="status-badge status-pending">
-                    <i class="bi bi-truck me-1"></i> In Transit
-                </span>
-            </div>
-
-            <div class="order-item">
-                <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&q=80&w=200" class="product-img">
-                <div class="item-details">
-                    <h6>Fiddle Leaf Fig</h6>
-                    <p>Qty: 1 • $60.00</p>
-                </div>
-            </div>
-
-            <div class="order-footer">
-                <div class="order-total">
-                    Total: $60.00
-                </div>
-
-                <button class="btn-return opacity-50" disabled>
-                    Return Not Available
-                </button>
-            </div>
-
-        </div>
 
     </div>
 </section>
@@ -333,37 +385,48 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="return-form">
+                <form class="return-form" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label>Full Name</label>
-                        <input type="text" class="form-control" placeholder="Your name" required>
+                        <input type="text" class="form-control" placeholder="Your name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" class="form-control" placeholder="Your email" name="email" required>
                     </div>
                     <div class="mb-3">
                         <label>Mobile Number</label>
-                        <input type="tel" class="form-control" placeholder="+1 (555) 000-0000" required>
+                        <input type="tel" class="form-control" placeholder="8086804525" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Order Id</label>
+                        <input type="text" class="form-control" placeholder="Your order ID" name="order_id" required>
                     </div>
                     <div class="mb-3">
                         <label>Reason for Replacement</label>
-                        <select class="form-select">
+                        <select class="form-select" name="reason" required>
                             <option selected disabled>Select a reason</option>
-                            <option>Damaged during transit</option>
-                            <option>Incorrect plant received</option>
-                            <option>Severe wilting / Health issues</option>
-                            <option>Other</option>
+                            <option value="damaged_during_transit">Damaged during transit</option>
+                            <option value="incorrect_plant_received">Incorrect plant received</option>
+                            <option value="severe_wilting_health_issues">Severe wilting / Health issues</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label>Details</label>
-                        <textarea class="form-control" rows="3" placeholder="Please describe the issue..."></textarea>
+                        <textarea class="form-control" rows="3" placeholder="Please describe the issue..." name="details"></textarea>
                     </div>
-                    <div class="mb-4">
-                        <label>Upload Evidence (Photos)</label>
-                        <div class="file-upload-wrapper">
-                            <i class="bi bi-camera" style="font-size: 1.5rem; color: var(--accent-green);"></i>
-                            <p class="small text-muted mb-0">Click to upload photo of the plant & box</p>
-                            <input type="file" hidden id="fileUpload">
-                        </div>
-                    </div>
+<div class="mb-4">
+    <label>Upload Evidence (Photos or Video)</label>
+
+    <label for="fileUpload" class="file-upload-wrapper d-flex flex-column align-items-center justify-content-center p-4 border rounded text-center" style="cursor:pointer;">
+        <i class="bi bi-camera" style="font-size:1.5rem; color:var(--accent-green);"></i>
+        <p class="small text-muted mb-0">Click to upload photo or video of the plant & box</p>
+    </label>
+
+    <input type="file" name="proof" id="fileUpload" hidden>
+</div>
                     <button type="submit" class="btn-track w-100 position-relative py-3">Submit Replacement Request</button>
                 </form>
             </div>
@@ -391,12 +454,12 @@
                         Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
                         our community for expert advice and resources to <br> support your care journey.
                     </p>
-                    <div class="subscribe-form mx-auto position-relative">
+                    <form class="subscribe-form mx-auto position-relative">
                         <input type="email" class="form-control" placeholder="Enter your email address here">
                         <button class="btn btn-subscribe">
                             <i class="bi bi-arrow-up-right"></i>
                         </button>
-                    </div>
+                    </form>
                     <!-- Decorative images -->
                     <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
                     <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
@@ -414,37 +477,39 @@
                             <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
                         </div>
                         <div class="social-links d-flex gap-2">
-                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                            <a href="https://www.instagram.com/deva.sgarden?igsh=MWYwYWhnemY0bzEycQ==" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <!-- <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a> -->
+                            <a href="https://www.facebook.com/share/1J8gAksrqS/" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="https://youtube.com/@devaslifestyle6922?si=zFXBco4zA18OCJeZ" class="social-icon"><i class="bi bi-youtube"></i></a>
                         </div>
                     </div>
                     <!-- Customer Care -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Customer care</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Our Story</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Track Order</a></li>
+                            <li><a href="#aboutsection">Our Story</a></li>
+                            <li><a href="{% url 'contactus' %}">Contact Us</a></li>
+                            <li><a href="{% url 'trackorder' %}">Track Order</a></li>
                         </ul>
                     </div>
                     <!-- Our Policies -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Our policies</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Refund Policy</a></li>
-                            <li><a href="#">Terms Of Service</a></li>
+                            <li><a href="{% url 'privacypolicy' %}">Privacy Policy</a></li>
+                            <li><a href="{% url 'returnpolicy' %}">Cancellation & Replacement Policy</a></li>
+                            <li><a href="{% url 'shippinganddeliveryPolicy' %}">Shipping and Delivery Policy</a></li>
+                            <li><a href="{% url 'terms' %}">Terms Of Service</a></li>
+
                         </ul>
                     </div>
                     <!-- Contact Us -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Contact us</h6>
-                        <ul class="footer-contact list-unstyled">
-                            <li>569-852-1235</li>
-                            <li>Vitc@.com</li>
-                            <li>Vitc@.com</li>
+                        <ul class="footer-contact list-unstyled  ">
+                            <li><a class="text-decoration-none text-muted " href="tel:8089530886">+91 8089530886</a></li>
+                            <li><a class="text-decoration-none text-muted " href="mailto:devasgarden321@gmail.com">devasgarden321@gmail.com</a></li>
+                                                   
                         </ul>
                     </div>
                 </div>
@@ -467,6 +532,14 @@
 
     <!-- Custom JS -->
     <script src="{% static 'js/script.js' %}"></script>
+
+
+    <script>
+document.getElementById("fileUpload").addEventListener("change", function(){
+    const fileName = this.files[0]?.name || "Click to upload photo or video of the plant & box";
+    document.querySelector(".file-upload-wrapper p").textContent = fileName;
+});
+</script>
 
 
 

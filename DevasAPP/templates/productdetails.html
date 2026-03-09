@@ -5,7 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deva's Garden - Fruit Tree Specialist</title>
+    <title>{{ product.title }} - Deva's Garden</title>
+
+<meta name="description" content="{{ product.short_description }}">
+
+<meta property="og:title" content="{{ product.title }} | Deva's Garden">
+<meta property="og:description" content="{{ product.short_description }}">
+<meta property="og:image" content="{{ product.main_image.url }}">
+
+<link rel="icon" href="{% static 'images/Group6.png' %}">
+
+
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -345,7 +356,16 @@
     {% endwith %}
 
 </div>
-                            <a href="javascript:void(0)" id="readMoreBtn" class="read-more-link">Read more...</a>
+
+    {% with words=product.short_description|wordcount %}
+        
+        {% if words > 30 %}
+            
+            <a href="javascript:void(0)" id="readMoreBtn" class="read-more-link">Read more...</a>
+        {% endif %}
+    {% endwith %}
+    
+    
                         </div>
 
                         <div class="product-actions d-flex align-items-center gap-3 mb-4">
@@ -616,15 +636,15 @@
                         Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
                         our community for expert advice and resources to <br> support your care journey.
                     </p>
-                    <div class="subscribe-form mx-auto position-relative">
+                    <form class="subscribe-form mx-auto position-relative">
                         <input type="email" class="form-control" placeholder="Enter your email address here">
                         <button class="btn btn-subscribe">
                             <i class="bi bi-arrow-up-right"></i>
                         </button>
-                    </div>
+                    </form>
                     <!-- Decorative images -->
-                    <img src="images/footerimage1.png" alt="" class="cta-bg-img left-bottom">
-                    <img src="images/footerimage2.png" alt="" class="cta-bg-img right-top">
+                    <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
+                    <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
                 </div>
             </div>
         </section>
@@ -636,40 +656,42 @@
                     <!-- Brand Column -->
                     <div class="col-lg-3 col-md-6">
                         <div class="footer-brand mb-4">
-                            <img src="images/Group6.png" alt="Deva's Garden" class="footer-logo mb-2">
+                            <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
                         </div>
                         <div class="social-links d-flex gap-2">
-                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                            <a href="https://www.instagram.com/deva.sgarden?igsh=MWYwYWhnemY0bzEycQ==" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <!-- <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a> -->
+                            <a href="https://www.facebook.com/share/1J8gAksrqS/" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="https://youtube.com/@devaslifestyle6922?si=zFXBco4zA18OCJeZ" class="social-icon"><i class="bi bi-youtube"></i></a>
                         </div>
                     </div>
                     <!-- Customer Care -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Customer care</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Our Story</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Track Order</a></li>
+                            <li><a href="#aboutsection">Our Story</a></li>
+                            <li><a href="{% url 'contactus' %}">Contact Us</a></li>
+                            <li><a href="{% url 'trackorder' %}">Track Order</a></li>
                         </ul>
                     </div>
                     <!-- Our Policies -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Our policies</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Refund Policy</a></li>
-                            <li><a href="#">Terms Of Service</a></li>
+                            <li><a href="{% url 'privacypolicy' %}">Privacy Policy</a></li>
+                            <li><a href="{% url 'returnpolicy' %}">Cancellation & Replacement Policy</a></li>
+                            <li><a href="{% url 'shippinganddeliveryPolicy' %}">Shipping and Delivery Policy</a></li>
+                            <li><a href="{% url 'terms' %}">Terms Of Service</a></li>
+
                         </ul>
                     </div>
                     <!-- Contact Us -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Contact us</h6>
-                        <ul class="footer-contact list-unstyled">
-                            <li>569-852-1235</li>
-                            <li>Vitc@.com</li>
-                            <li>Vitc@.com</li>
+                        <ul class="footer-contact list-unstyled  ">
+                            <li><a class="text-decoration-none text-muted " href="tel:8089530886">+91 8089530886</a></li>
+                            <li><a class="text-decoration-none text-muted " href="mailto:devasgarden321@gmail.com">devasgarden321@gmail.com</a></li>
+                                                   
                         </ul>
                     </div>
                 </div>
@@ -683,11 +705,10 @@
     </div>
 
     <!-- Offer Popup -->
-    <div id="offerPopupOverlay" class="popup-overlay"></div>
+    <!-- <div id="offerPopupOverlay" class="popup-overlay"></div>
     <div id="offerPopup" class="offer-popup">
         <button id="closePopup" class="close-popup"><i class="bi bi-x-lg"></i></button>
         <div class="popup-content">
-            <!-- Background image will be set via CSS or here -->
             <div class="popup-image-container">
                 <img src="images/plant.jpg" alt="Special Offer" class="popup-bg-img">
                 <div class="popup-form-overlay">
@@ -698,7 +719,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 

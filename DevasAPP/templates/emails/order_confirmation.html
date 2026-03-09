@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f7f6;
+    padding:20px;
+}
+
+.email-container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header{
+    background:#2e7d32;
+    color:white;
+    padding:20px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.content{
+    padding:25px;
+    color:#333;
+}
+
+.order-box{
+    background:#f9f9f9;
+    padding:15px;
+    border-radius:6px;
+    margin-top:15px;
+}
+
+.order-items{
+    margin-top:10px;
+}
+
+.order-items li{
+    padding:5px 0;
+}
+
+.footer{
+    text-align:center;
+    padding:15px;
+    font-size:13px;
+    color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="email-container">
+
+<div class="header">
+🌿 Your Order Confirmation
+</div>
+
+<div class="content">
+
+<p>Hello {{ name }},</p>
+
+<p>Thank you for your order! Your order will soon be on their way 🌱</p>
+
+<div class="order-box">
+
+<strong>Order ID:</strong> {{ order_id }}
+
+<h4>Items Ordered</h4>
+
+<ul class="order-items">
+{% for item in items %}
+<li>{{ item.product.title }} (Qty: {{ item.quantity }})</li>
+{% endfor %}
+</ul>
+
+</div>
+
+<p style="margin-top:20px;">
+Estimated Delivery: <strong>4-7 working days</strong>
+</p>
+
+<p>
+If you have any questions, feel free to contact us.
+</p>
+
+</div>
+
+<div class="footer">
+Thank you for choosing our Deva's Garden 🌿
+</div>
+
+</div>
+
+</body>
+</html>

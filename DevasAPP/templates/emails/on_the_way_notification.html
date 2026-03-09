@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f7f6;
+    padding:20px;
+}
+
+.email-container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header{
+    background:#1b5e20;
+    color:white;
+    padding:20px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.content{
+    padding:25px;
+    color:#333;
+}
+
+.info-box{
+    background:#f9f9f9;
+    padding:15px;
+    border-radius:6px;
+    margin-top:15px;
+}
+
+.order-items{
+    margin-top:10px;
+}
+
+.order-items li{
+    padding:5px 0;
+}
+
+.footer{
+    text-align:center;
+    padding:15px;
+    font-size:13px;
+    color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="email-container">
+
+<div class="header">
+🚨 Your Order #{{order_id}} Has Been Shipped
+</div>
+
+<div class="content">
+
+<p>Hi {{order.first_name}}</p>
+
+<p>Your order #{{order.id}} has been shipped 🚚</p>
+
+<p>Your plants are now on the way to you.</p>
+
+<p>You can expect delivery within a few working days.</p>
+
+<p><strong>Thank you for shopping with Devas Garden!</strong></p>
+
+<div class="info-box">
+
+<p><strong>Order ID:</strong> {{ order_id }}</p>
+
+<p><strong>Customer Name:</strong> {{ name }}</p>
+
+<p><strong>Email:</strong> {{ email }}</p>
+
+<p><strong>Phone:</strong> {{ phone }}</p>
+
+</div>
+
+<h4 style="margin-top:20px;">Ordered Items</h4>
+
+<ul class="order-items">
+{% for item in items %}
+<li>{{ item.product.title }} (Qty: {{ item.quantity }})</li>
+{% endfor %}
+</ul>
+
+</div>
+
+<div class="footer">
+Thank you for choosing our Deva's Garden 🌿
+</div>
+
+</div>
+
+</body>
+</html>

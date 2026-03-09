@@ -1,11 +1,508 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Order Successful - Deva's Garden</title>
+
+    <meta name="description" content="Your order has been successfully placed at Deva's Garden. Thank you for shopping with us. Your plants and gardening products will be delivered soon.">
+
+    <meta property="og:title" content="Order Successful | Deva's Garden">
+    <meta property="og:description" content="Thank you for your purchase from Deva's Garden. Your order has been successfully placed.">
+
+    <link rel="icon" href="{% static 'images/Group6.png' %}">
+
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+
+
+    <style>
+        .order-success-section{
+    min-height:80vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f6f9f7;
+    padding:40px 20px;
+    font-family: "inter", sans-serif;
+}
+
+.success-container{
+    max-width:720px;
+    width:100%;
+    background:white;
+    padding:50px 40px;
+    border-radius:14px;
+    text-align:center;
+    box-shadow:0 12px 35px rgba(0,0,0,0.08);
+}
+
+.success-icon{
+    font-size:70px;
+    color:var(--primary-color);
+    margin-bottom:20px;
+}
+
+.success-title{
+    font-size:28px;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.success-message{
+    color:#666;
+    margin-bottom:25px;
+}
+
+.delivery-info{
+    background:#f1f8f4;
+    border-left:4px solid var(--primary-color);
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:30px;
+    font-size:15px;
+}
+
+.delivery-info i{
+    margin-right:8px;
+    color:var(--primary-color);
+}
+
+.order-actions{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+}
+
+.btn-continue{
+    background:var(--accent-green);
+    color:white;
+    padding:12px 22px;
+    border-radius:6px;
+    text-decoration:none;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.btn-continue:hover{
+    opacity:0.9;
+}
+
+.btn-view-order{
+    border:1px solid #ddd;
+    padding:12px 22px;
+    border-radius:6px;
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition: 0.5s;
+    background-color: var(--track-yellow);
+}
+
+.btn-view-order:hover{
+    background:#f5f5f5;
+}
+    </style>
+    <!-- Cart CSS -->
 </head>
+
 <body>
-    <h1>Order successful</h1>
+
+     <div class="header-sticky-wrapper">
+        <div class="top-banner py-2">
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    Get up to 35% OFF today!
+                    <a href="#" class="text-white text-decoration-underline fw-bold">GET NOW</a>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Mobile Nav Overlay -->
+        <div class="mob-nav-overlay" id="mobNavOverlay"></div>
+
+        <!-- Mobile Nav Drawer (slides in from right) -->
+        <div class="mob-nav-drawer" id="mobNavDrawer">
+            <div class="mob-nav-drawer-inner">
+                <!-- Drawer Header -->
+                <div class="mob-nav-drawer-header">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="mob-nav-logo">
+                    <button class="mob-nav-close" id="mobNavClose" aria-label="Close menu">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Links -->
+                <ul class="mob-nav-links">
+                    <li><a href="{% url 'index' %}" class="mob-nav-link ">Home</a></li>
+                    <li class="mob-cat-item">
+                        <button class="mob-cat-btn" id="mobCatBtn" aria-expanded="false">
+                            Category
+                            <i class="bi bi-chevron-right mob-cat-chevron"></i>
+                        </button>
+                        <div class="mob-cat-submenu" id="mobCatSubmenu">
+                            <!-- Nested Sub-category: Indoor Plants -->
+                        {% for category in categories %}
+                            {% if category.subcategories.exists %}
+                            <div class="mob-subcat-item">
+                                <button class="mob-subcat-btn">
+                                    <span>{{ category.name }}</span>
+                                    <i class="bi bi-chevron-right mob-subcat-chevron"></i>
+                                </button>
+                                <div class="mob-subcat-menu">
+                                    {% for subcategory in category.subcategories.all %}
+                                    <a href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a>
+                                    {% endfor %}
+                                    <!-- <a href="#">Money Plants</a> -->
+                                </div>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                                <!-- <a href="#">🌳 Fruit Trees</a>
+                                <a href="#">🌸 Flowering Plants</a>
+                                <a href="#">🪴 Succulents & Cacti</a>
+                                <a href="#">🌱 Medicinal Plants</a>
+                                <a href="#">🪣 Gardening Supplies</a> -->
+                        </div>
+                    </li>
+                    <li><a href="{% url 'products' %}" class="mob-nav-link ">Products</a></li>
+                    <li><a href="{% url 'bloglisting' %}" class="mob-nav-link">Blog</a></li>
+                    <li><a href="{% url 'contactus' %}" class="mob-nav-link">Contact Us</a></li>
+                </ul>
+
+                <!-- Track Order Button -->
+                <div class="mob-nav-footer">
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track  w-100 mb-3">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track  w-100 mb-3">Login</a>
+                    {% endif %}
+
+
+                    <a href="{% url 'trackorder' %}" class="btn btn-track w-100">Track Your Order</a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container d-flex align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand me-4" href="{% url 'index' %}">
+                    <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden Logo" class="logo-img">
+                </a>
+
+                <!-- Mobile Icons & Hamburger -->
+                <div class="d-flex align-items-center d-lg-none ms-auto">
+                    <button class="nav-icon-btn me-2" id="searchBtnMobile">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                    <div class="position-relative me-2 ">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn">
+                            <i class="bi bi-bag"></i>
+                        </a>
+                        <span class="cart-badge"id="cart-count">{{ cart_count }}</span>
+                    </div>
+
+                    <div class="position-relative me-3">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
+                    </div>
+
+
+                    <!-- Custom hamburger — opens right drawer -->
+                    <button class="mob-hamburger" id="mobNavOpen" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link " href="{% url 'index' %}">Home</a></li>
+                        <li class="nav-item dropdown dropdown-hover">
+                            <a class="nav-link" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Category <i class="bi bi-chevron-down ms-1 dropdown-icon"></i>
+                            </a>
+                            <ul class="dropdown-menu nav-category-menu shadow-sm border-0"
+                                aria-labelledby="categoryDropdown">
+                            {% for category in categories %}
+
+                                {% if category.subcategories.exists %}
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">
+                                        {{ category.name }} <i class="bi bi-chevron-right submenu-icon"></i>
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        {% for subcategory in category.subcategories.all %}
+                                        <li><a class="dropdown-item" href="{% url 'products_by_category' subcategory.slug %}">{{ subcategory.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'products_by_category' category.slug %}">{{ category.name }}</a></li>
+                                {% endif %}
+                                <!-- <li><a class="dropdown-item" href="#">🌳 Fruit Trees</a></li>
+                                <li><a class="dropdown-item" href="#">🌸 Flowering Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪴 Succulents & Cacti</a></li>
+                                <li><a class="dropdown-item" href="#">🌱 Medicinal Plants</a></li>
+                                <li><a class="dropdown-item" href="#">🪣 Gardening Supplies</a></li> -->
+                            {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link " href="{% url 'products' %}">Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'bloglisting' %}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contactus' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Desktop right icons -->
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <button class="nav-icon-btn" id="searchBtn"><i class="bi bi-search"></i></button>
+                    <div class="position-relative">
+                        <a href="{% url 'cart' %}" class="nav-icon-btn"><i class="bi bi-bag"></i></a>
+                        <span class="cart-badge" id="cart-count">{{ cart_count }}</span>
+
+                    </div>
+
+                                        <div class="position-relative ">
+                        <a href="{% url 'wishlist' %}" class="nav-icon-btn">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span class="wish-badge"id="wish-count">{{wishlist_count}}</span>
+                    </div>
+
+
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-track">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-track">Login</a>
+                    {% endif %}
+                    
+                    <a href="{% url 'trackorder' %}" class="btn btn-track">Track Your Order</a>
+                </div>
+            </div>
+
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-wrapper">
+                <div class="container h-100">
+                    <div class="search-form-container">
+                        <form action="{% url 'search' %}" method="GET" class="d-flex">
+                            <input type="text" class="form-control"
+                                placeholder="Search for plants, trees, gardening tools..."  name="q" aria-label="Search">
+                            <button type="submit" class="btn btn-search-submit">
+                                <i class="bi bi-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+        </nav>
+    </div>
+
+
+
+
+
+
+    <section class="order-success-section">
+
+    <div class="success-container">
+
+        <div class="success-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+
+        <h1 class="success-title">Order Confirmed!</h1>
+
+        <p class="success-message">
+            Thank you for your purchase. Your order has been successfully placed.
+        </p>
+
+        <div class="delivery-info">
+            <i class="bi bi-truck"></i>
+            Your order will be delivered within <strong>4 - 7 working days</strong>.
+        </div>
+
+        <div class="order-actions">
+
+            <a href="{% url 'index' %}" class="btn-continue">
+                Continue Shopping
+            </a>
+
+            <a href="{% url 'trackorder' %}" class="btn-view-order">
+                View My Orders
+            </a>
+
+        </div>
+        <div class="mt-4">
+            <p class="mb-0 success-message ">Need help? <a href="{% url 'contactus' %}" class="text-decoration-underline">Contact our support team</a></p>
+        </div>
+
+
+    </div>
+
+</section>
+    
+
+
+
+    <!-- WhatsApp Float -->
+<a href="https://wa.me/918089530886" target="_blank" class="whatsapp-float">
+    <i class="bi bi-whatsapp"></i>
+</a>
+
+
+<div class="position-fixed top-0 start-50 translate-middle-x p-3"
+     style="z-index: 9999; width: 100%; max-width: 600px;">
+
+{% if messages %}
+  {% for message in messages %}
+    
+    <div class="alert 
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% elif message.tags == 'success' %}
+            alert-success
+        {% else %}
+            alert-primary
+        {% endif %}
+        alert-dismissible fade show shadow"
+        role="alert">
+
+        {{ message }}
+
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert"></button>
+    </div>
+
+  {% endfor %}
+{% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        <!-- CTA & Footer Wrapper -->
+    <div class="footer-wrapper">
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container overflow-hidden">
+                <div class="cta-box text-center text-white  position-relative">
+                    <h2 class="cta-title">Stay Connected, Stay Informed</h2>
+                    <p class="cta-text mb-5">
+                        Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
+                        our community for expert advice and resources to <br> support your care journey.
+                    </p>
+                    <form class="subscribe-form mx-auto position-relative">
+                        <input type="email" class="form-control" placeholder="Enter your email address here">
+                        <button class="btn btn-subscribe">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </button>
+                    </form>
+                    <!-- Decorative images -->
+                    <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
+                    <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row g-4 pt-5 pb-5">
+                    <!-- Brand Column -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
+                        </div>
+                        <div class="social-links d-flex gap-2">
+                            <a href="https://www.instagram.com/deva.sgarden?igsh=MWYwYWhnemY0bzEycQ==" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <!-- <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a> -->
+                            <a href="https://www.facebook.com/share/1J8gAksrqS/" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="https://youtube.com/@devaslifestyle6922?si=zFXBco4zA18OCJeZ" class="social-icon"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <!-- Customer Care -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Customer care</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="#aboutsection">Our Story</a></li>
+                            <li><a href="{% url 'contactus' %}">Contact Us</a></li>
+                            <li><a href="{% url 'trackorder' %}">Track Order</a></li>
+                        </ul>
+                    </div>
+                    <!-- Our Policies -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Our policies</h6>
+                        <ul class="footer-links list-unstyled">
+                            <li><a href="{% url 'privacypolicy' %}">Privacy Policy</a></li>
+                            <li><a href="{% url 'returnpolicy' %}">Cancellation & Replacement Policy</a></li>
+                            <li><a href="{% url 'shippinganddeliveryPolicy' %}">Shipping and Delivery Policy</a></li>
+                            <li><a href="{% url 'terms' %}">Terms Of Service</a></li>
+
+                        </ul>
+                    </div>
+                    <!-- Contact Us -->
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="footer-heading mb-4">Contact us</h6>
+                        <ul class="footer-contact list-unstyled  ">
+                            <li><a class="text-decoration-none text-muted " href="tel:8089530886">+91 8089530886</a></li>
+                            <li><a class="text-decoration-none text-muted " href="mailto:devasgarden321@gmail.com">devasgarden321@gmail.com</a></li>
+                                                   
+                        </ul>
+                    </div>
+                </div>
+                <hr class="footer-divider">
+                <div class="footer-bottom d-flex justify-content-between align-items-center py-4">
+                    <p class="mb-0">Devas Garden Copyright © 2026. All Rights Reserved.</p>
+                    <!-- <a href="#" class="privacy-link">privacy policy</a> -->
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- jQuery (Required for Owl Carousel) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS & Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Owl Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+
+
+
 </body>
+
 </html>

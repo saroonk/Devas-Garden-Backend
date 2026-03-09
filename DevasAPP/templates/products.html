@@ -6,6 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - Deva's Garden</title>
+
+
+    <meta name="description" content="Explore a wide range of plants and gardening products at Deva's Garden. Discover indoor plants, outdoor plants, and essential gardening supplies.">
+
+<meta property="og:title" content="Plants and Gardening Products | Deva's Garden">
+<meta property="og:description" content="Browse our collection of plants and gardening products available at Deva's Garden.">
+
+<link rel="icon" href="{% static 'images/Group6.png' %}">
+
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -232,9 +242,9 @@
 
 
     <!-- WhatsApp Float -->
-    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
-        <i class="bi bi-whatsapp"></i>
-    </a>
+<a href="https://wa.me/918089530886" target="_blank" class="whatsapp-float">
+    <i class="bi bi-whatsapp"></i>
+</a>
 
 
     <!-- Page Header -->
@@ -244,10 +254,22 @@
         <div class="container">
         <h1 class="products-page-title">{% if selected_category %}{{ selected_category.name|title }}{% elif selected_subcategory %}{{ selected_subcategory.name|title }}{% else %}Our Products{% endif %}</h1>
             <p class="products-page-desc">
-                Experience the tangy zest and vibrant flavors of our citrus collection. From <a href="#">juicy
-                    oranges</a> to zesty lemons, our <a href="#">citrus fruits</a> are bursting with freshness and
-                nutritional goodness. Explore our selection and add a burst of sunshine to your day.
-            </p>
+        {% if selected_category %}
+            Explore our collection of <strong>{{ selected_category.name|title }}</strong>. 
+            From vibrant greens to beautiful flowering plants, discover healthy plants 
+            carefully grown to bring freshness and natural beauty to your home and garden.
+
+        {% elif selected_subcategory %}
+            Browse our selection of <strong>{{ selected_subcategory.name|title }}</strong>. 
+            Each plant is chosen to add life, color, and a refreshing touch of nature 
+            to your indoor and outdoor spaces.
+
+        {% else %}
+            Discover our wide range of plants and flowers grown with care and love. 
+            Whether you're looking for indoor plants, flowering varieties, or garden 
+            favorites, our collection brings natural beauty and freshness to every space.
+        {% endif %}
+    </p>
         </div>
         {% else %}
         <div class="container">
@@ -535,12 +557,12 @@
                         Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
                         our community for expert advice and resources to <br> support your care journey.
                     </p>
-                    <div class="subscribe-form mx-auto position-relative">
+                    <form class="subscribe-form mx-auto position-relative">
                         <input type="email" class="form-control" placeholder="Enter your email address here">
                         <button class="btn btn-subscribe">
                             <i class="bi bi-arrow-up-right"></i>
                         </button>
-                    </div>
+                    </form>
                     <!-- Decorative images -->
                     <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
                     <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
@@ -558,37 +580,39 @@
                             <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
                         </div>
                         <div class="social-links d-flex gap-2">
-                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                            <a href="https://www.instagram.com/deva.sgarden?igsh=MWYwYWhnemY0bzEycQ==" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <!-- <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a> -->
+                            <a href="https://www.facebook.com/share/1J8gAksrqS/" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="https://youtube.com/@devaslifestyle6922?si=zFXBco4zA18OCJeZ" class="social-icon"><i class="bi bi-youtube"></i></a>
                         </div>
                     </div>
                     <!-- Customer Care -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Customer care</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Our Story</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Track Order</a></li>
+                            <li><a href="#aboutsection">Our Story</a></li>
+                            <li><a href="{% url 'contactus' %}">Contact Us</a></li>
+                            <li><a href="{% url 'trackorder' %}">Track Order</a></li>
                         </ul>
                     </div>
                     <!-- Our Policies -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Our policies</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Refund Policy</a></li>
-                            <li><a href="#">Terms Of Service</a></li>
+                            <li><a href="{% url 'privacypolicy' %}">Privacy Policy</a></li>
+                            <li><a href="{% url 'returnpolicy' %}">Cancellation & Replacement Policy</a></li>
+                            <li><a href="{% url 'shippinganddeliveryPolicy' %}">Shipping and Delivery Policy</a></li>
+                            <li><a href="{% url 'terms' %}">Terms Of Service</a></li>
+
                         </ul>
                     </div>
                     <!-- Contact Us -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Contact us</h6>
-                        <ul class="footer-contact list-unstyled">
-                            <li>569-852-1235</li>
-                            <li>Vitc@.com</li>
-                            <li>Vitc@.com</li>
+                        <ul class="footer-contact list-unstyled  ">
+                            <li><a class="text-decoration-none text-muted " href="tel:8089530886">+91 8089530886</a></li>
+                            <li><a class="text-decoration-none text-muted " href="mailto:devasgarden321@gmail.com">devasgarden321@gmail.com</a></li>
+                                                   
                         </ul>
                     </div>
                 </div>
@@ -627,10 +651,57 @@ function getCookie(name) {
     return cookieValue;
 }
 
-addtocartbtn.forEach(el => {
-    el.addEventListener('click', function () {
+// addtocartbtn.forEach(el => {
+//     el.addEventListener('click', function () {
 
-        const productId = this.dataset.productId;
+//         const productId = this.dataset.productId;
+//         const csrfToken = getCookie('csrftoken');
+
+//         fetch("{% url 'add_to_cart' %}", {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/x-www-form-urlencoded",
+//                 "X-CSRFToken": csrfToken
+//             },
+//             body: `product_id=${productId}`
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+
+//             if (data.status === "success") {
+
+//                 // Update cart badge
+//                 document.querySelectorAll('.cart-badge').forEach(el => {
+//                     el.textContent = data.cart_count;
+//                 });
+
+//                 // Button animation
+//                 this.textContent = "Added";
+//                 this.style.backgroundColor = "#1d2d03ff";
+
+//                 setTimeout(() => {
+//                     this.textContent = "Add to cart";
+//                     this.style.backgroundColor = "#558903";
+//                 }, 1500);
+//             }
+//         })
+//         .catch(error => console.error("Error:", error));
+//     });
+// });
+
+
+
+
+
+
+
+
+document.addEventListener("click", function(e){
+
+    if(e.target.classList.contains("addtocartbtn")){
+
+        const button = e.target;
+        const productId = button.dataset.productId;
         const csrfToken = getCookie('csrftoken');
 
         fetch("{% url 'add_to_cart' %}", {
@@ -646,27 +717,39 @@ addtocartbtn.forEach(el => {
 
             if (data.status === "success") {
 
-                // Update cart badge
                 document.querySelectorAll('.cart-badge').forEach(el => {
                     el.textContent = data.cart_count;
                 });
 
-                // Button animation
-                this.textContent = "Added";
-                this.style.backgroundColor = "#1d2d03ff";
+                button.textContent = "Added";
+                button.style.backgroundColor = "#1d2d03ff";
 
                 setTimeout(() => {
-                    this.textContent = "Add to cart";
-                    this.style.backgroundColor = "#558903";
+                    button.textContent = "Add to cart";
+                    button.style.backgroundColor = "#558903";
                 }, 1500);
             }
-        })
-        .catch(error => console.error("Error:", error));
-    });
+        });
+
+    }
+
 });
 
 
 
+
+document.addEventListener("click", function(e){
+
+    const card = e.target.closest(".product-card");
+
+    if(card && !e.target.classList.contains("addtocartbtn")){
+        const url = card.dataset.url;
+        if(url){
+            window.location.href = url;
+        }
+    }
+
+});
 
 
 

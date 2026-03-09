@@ -537,3 +537,49 @@ class OrderItem(models.Model):
     @property
     def subtotal(self):
         return self.price * self.quantity
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ReplacementRequest(models.Model):
+
+    REASON_CHOICES = [
+        ("damaged_during_transit", "Damaged during transit"),
+        ("incorrect_plant_received", "Incorrect plant received"),
+        ("severe_wilting_health_issues", "Severe wilting / Health issues"),
+        ("other", "Other"),
+    ]
+
+    User=models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    orderdetails_id = models.CharField(max_length=50)
+
+    reason = models.CharField(
+        max_length=100,
+        choices=REASON_CHOICES
+    )
+
+    details = models.TextField(blank=True, null=True)
+
+    proof = models.FileField(
+        upload_to="replacement_proofs/",
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.order_id} - {self.name}"

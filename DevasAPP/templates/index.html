@@ -6,6 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deva's Garden - Plant's Specialist</title>
+    <meta name="description" content="Deva's Garden offers a wide range of indoor plants, outdoor plants, and gardening products. Shop healthy plants online and bring nature to your home.">
+
+<meta property="og:title" content="Deva's Garden | Plants and Gardening Products">
+<meta property="og:description" content="Discover healthy plants and gardening products at Deva's Garden. Perfect for your home and garden.">
+
+<link rel="icon" href="{% static 'images/Group6.png' %}">
+
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -235,9 +243,9 @@
 
 
 
-    <a href="https://wa.me/919999999999" target="_blank" class="whatsapp-float">
-        <i class="bi bi-whatsapp"></i>
-    </a>
+<a href="https://wa.me/918089530886" target="_blank" class="whatsapp-float">
+    <i class="bi bi-whatsapp"></i>
+</a>
 
 
 
@@ -252,7 +260,7 @@
                     <div class="hero-text-area py-5 position-relative">
                         <h4 class="hero-subtitle">{{ hero.subtitle }}</h4>
                         <h1 class="hero-title">{{ hero.title }}</h1>
-                        <button class="btn btn-buy-now mt-3">{{ hero.button_text|default:"Buy now" }}</button>
+                        <a href="{% url 'products' %}" class="btn btn-buy-now mt-3">{{ hero.button_text|default:"Buy now" }}</a>
                     </div>
                 </div>
                 <!-- Right Slider Area -->
@@ -406,22 +414,36 @@
 
             <div class="row g-md-4 g-3">
                 <!-- Product 1 -->
+
+                {% for product in topproducts %}
+
                 <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="">
+                    <div class="product-card" data-url="{% url 'productdetails' product.slug %}">
                         <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/10/400/400" alt="Product 1" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
+                            <img src="{{ product.main_image.url }}" alt="{{ product.title }}" class="product-img">
+                            <span class="product-badge">{% if product.subcategory %}{{ product.subcategory.name|title }}{% else %}{{ product.category.name|title }}{% endif %}</span>
+                            <!-- <span class="product-badge">{{ product.category.name|upper }}<i class="bi bi-arrow-right"></i>{{ product.subcategory.name|upper }}</span> -->
+
+
+
                         </div>
                         <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <h6 class="product-name">{{ product.title }}</h6>
                             <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
+                                <span class="current-price">RS {{ product.new_price }}</span>
+                                <span class="old-price">RS {{ product.old_price }}</span>
                             </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                            {% if product.stock > 0 %}
+                                <a data-product-id="{{ product.id }}" class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none">Add to cart</a>
+                            {% else %}
+                                <a class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none" disabled>Out of Stock</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                    <p>No products found.</p>
+                {% endfor %}
                 
             </div>
         </div>
@@ -435,7 +457,7 @@
 
 
 
-    <section class="about-section py-md-5 py-1 my-md-5 my-1">
+    <section class="about-section py-md-5 py-1 my-md-5 my-1" id="aboutsection">
         <div class="container">
             <div class="row align-items-center g-md-5">
                 <!-- Left Image Area -->
@@ -519,142 +541,38 @@
 
 
             <div class="row g-4">
-                <!-- Product 1 -->
+               
+
+                {% for product in bottomproducts %}
+
                 <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
+                    <div class="product-card" data-url="{% url 'productdetails' product.slug %}">
                         <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/10/400/400" alt="Product 1" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
+                            <img src="{{ product.main_image.url }}" alt="{{ product.title }}" class="product-img">
+                            <span class="product-badge">{% if product.subcategory %}{{ product.subcategory.name|title }}{% else %}{{ product.category.name|title }}{% endif %}</span>
+                            <!-- <span class="product-badge">{{ product.category.name|upper }}<i class="bi bi-arrow-right"></i>{{ product.subcategory.name|upper }}</span> -->
+
+
+
                         </div>
                         <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
+                            <h6 class="product-name">{{ product.title }}</h6>
                             <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
+                                <span class="current-price">RS {{ product.new_price }}</span>
+                                <span class="old-price">RS {{ product.old_price }}</span>
                             </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
+                            {% if product.stock > 0 %}
+                                <a data-product-id="{{ product.id }}" class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none">Add to cart</a>
+                            {% else %}
+                                <a class="btn btn-add-cart w-100 mt-3 addtocartbtn text-decoration-none" disabled>Out of Stock</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                <!-- Product 2 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/11/400/400" alt="Product 2" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/12/400/400" alt="Product 3" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 4 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/13/400/400" alt="Product 4" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 5 (Repeat for 8) -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/14/400/400" alt="Product 5" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 6 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/15/400/400" alt="Product 6" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">ORANGE NAGPUR (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 7 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/16/400/400" alt="Product 7" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">MANGO ALPHONSO (GRAFTED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 8 -->
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                    <div class="product-card" data-url="productdetails.html">
-                        <div class="product-img-wrapper position-relative">
-                            <img src="https://picsum.photos/id/17/400/400" alt="Product 8" class="product-img">
-                            <span class="product-badge">Terrace/Garden friendly</span>
-                        </div>
-                        <div class="product-info mt-3">
-                            <h6 class="product-name">LITCHI (AIR LAYERED) - FRUIT PLANTS & TREE</h6>
-                            <div class="price-container d-flex align-items-center gap-2">
-                                <span class="current-price">RS 245.00</span>
-                                <span class="old-price">RS 245.00</span>
-                            </div>
-                            <button class="btn btn-add-cart w-100 mt-3 addtocartbtn">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
+                {% empty %}
+                    <p>No products found.</p>
+                {% endfor %}
+                
             </div>
         </div>
     </section>
@@ -814,12 +732,12 @@
                         Subscribe to receive exclusive updates, tips, and promotions straight to <br> your inbox. Join
                         our community for expert advice and resources to <br> support your care journey.
                     </p>
-                    <div class="subscribe-form mx-auto position-relative">
+                    <form class="subscribe-form mx-auto position-relative">
                         <input type="email" class="form-control" placeholder="Enter your email address here">
                         <button class="btn btn-subscribe">
                             <i class="bi bi-arrow-up-right"></i>
                         </button>
-                    </div>
+                    </form>
                     <!-- Decorative images -->
                     <img src="{% static 'images/footerimage1.png' %}" alt="" class="cta-bg-img left-bottom">
                     <img src="{% static 'images/footerimage2.png' %}" alt="" class="cta-bg-img right-top">
@@ -837,19 +755,19 @@
                             <img src="{% static 'images/Group6.png' %}" alt="Deva's Garden" class="footer-logo mb-2">
                         </div>
                         <div class="social-links d-flex gap-2">
-                            <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+                            <a href="https://www.instagram.com/deva.sgarden?igsh=MWYwYWhnemY0bzEycQ==" class="social-icon"><i class="bi bi-instagram"></i></a>
+                            <!-- <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a> -->
+                            <a href="https://www.facebook.com/share/1J8gAksrqS/" class="social-icon"><i class="bi bi-facebook"></i></a>
+                            <a href="https://youtube.com/@devaslifestyle6922?si=zFXBco4zA18OCJeZ" class="social-icon"><i class="bi bi-youtube"></i></a>
                         </div>
                     </div>
                     <!-- Customer Care -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Customer care</h6>
                         <ul class="footer-links list-unstyled">
-                            <li><a href="#">Our Story</a></li>
-                            <li><a href="contactus.html">Contact Us</a></li>
-                            <li><a href="trackorder.html">Track Order</a></li>
+                            <li><a href="#aboutsection">Our Story</a></li>
+                            <li><a href="{% url 'contactus' %}">Contact Us</a></li>
+                            <li><a href="{% url 'trackorder' %}">Track Order</a></li>
                         </ul>
                     </div>
                     <!-- Our Policies -->
@@ -866,10 +784,10 @@
                     <!-- Contact Us -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="footer-heading mb-4">Contact us</h6>
-                        <ul class="footer-contact list-unstyled">
-                            <li>569-852-1235</li>
-                            <li>Vitc@.com</li>
-                            <li>Vitc@.com</li>
+                        <ul class="footer-contact list-unstyled  ">
+                            <li><a class="text-decoration-none text-muted " href="tel:8089530886">+91 8089530886</a></li>
+                            <li><a class="text-decoration-none text-muted " href="mailto:devasgarden321@gmail.com">devasgarden321@gmail.com</a></li>
+                                                   
                         </ul>
                     </div>
                 </div>
@@ -897,10 +815,10 @@
                 <img src="{% static 'images/tehzeebkazmi-flower-6200239_1920.jpg' %}" alt="Special Offer" class="popup-bg-img">
                 {% endif %}
                 <div class="popup-form-overlay">
-                    <div class="popup-form-wrapper">
+                    <form class="popup-form-wrapper">
                         <input type="email" id="popupEmail" class="form-control" placeholder="Enter your email">
                         <button id="popupSignUp" class="btn btn-signup mt-3">SIGN UP</button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

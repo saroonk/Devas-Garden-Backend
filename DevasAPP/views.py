@@ -20,6 +20,9 @@ from django.views.decorators.http import require_POST
 
 from django.core.paginator import Paginator
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
 
 import json
 import razorpay
@@ -59,6 +62,76 @@ def MailSender(full_name, mobile_number, subject, email, user_message):
     send_mail(subject, message, from_email, recipient_list)
 
 
+
+
+def send_replacement_email(name, email, phone, orderdetails_id, reason, details):
+
+    subject = f"New Replacement Request for Order #{orderdetails_id}"
+
+    message = f"Name: {name}\n"
+    message += f"Email: {email}\n"
+    message += f"Phone: {phone}\n"
+    message += f"Order ID: {orderdetails_id}\n"
+    message += f"Reason: {reason}\n"
+    message += f"Details: {details}"
+
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [settings.DEFAULT_FROM_EMAIL]
+
+    send_mail(subject, message, from_email, recipient_list)
+
+
+
+def send_order_email(order):
+
+    subject = f"Your Order Has Been Confirmed - {order.id}"
+
+    html_content = render_to_string(
+        "emails/order_confirmation.html",
+        {
+            "name": f"{order.first_name} {order.last_name}",
+            "order_id": order.id,
+            "items": order.items.all()
+        }
+    )
+
+    email = EmailMultiAlternatives(
+        subject,
+        "",
+        settings.DEFAULT_FROM_EMAIL,
+        [order.email]
+    )
+
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+
+
+
+def send_owner_order_email(order):
+
+    subject = f"New Order Received - {order.id}"
+
+    html_content = render_to_string(
+        "emails/new_order_notification.html",
+        {
+            "name": f"{order.first_name} {order.last_name}",
+            "order_id": order.id,
+            "email": order.email,
+            "phone": order.phone,
+            "items": order.items.all()
+        }
+    )
+
+    email = EmailMultiAlternatives(
+        subject,
+        "",
+        settings.DEFAULT_FROM_EMAIL,
+        [settings.DEFAULT_FROM_EMAIL]
+    )
+
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+
 def index(request):
     hero = HeroSection.objects.prefetch_related('images').first()
 
@@ -67,9 +140,10 @@ def index(request):
     testimonials = Testimonial.objects.filter(is_active=True)
     blogs =Blog.objects.select_related('category').all()[:3]
 
-   
+    top = Product.objects.filter(is_featured=True).select_related("category", "subcategory").prefetch_related("images")[:8]
+    bottom = Product.objects.filter(is_featured=False).select_related("category", "subcategory").prefetch_related("images")[:8]
 
-    return render(request, 'index.html',{'hero':hero,'offer':offer,'test':testimonials, 'blogs': blogs})
+    return render(request, 'index.html',{'hero':hero,'offer':offer,'test':testimonials, 'blogs': blogs, 'topproducts': top, 'bottomproducts': bottom})
 
 
 
@@ -209,6 +283,15 @@ def checkout(request):
             )
 
             return redirect('cart')
+        
+        if item.quantity<=0:
+            messages.error(
+                request,
+                f"Sorry! product quantity must be minimum 1 ."
+            )
+            return redirect('cart')
+
+
 
     context = {
         "cart": cart,
@@ -307,6 +390,7 @@ def products(request, slug=None):
         Product.objects
         .select_related("category", "subcategory")
         .prefetch_related("images")
+        .order_by("-created_at")
     )
 
     selected_category = None
@@ -357,7 +441,67 @@ def shippinganddeliveryPolicy(request):
     return render(request, 'shippinganddeliveryPolicy.html')
 
 def trackorder(request):
-    return render(request, 'trackorder.html')
+    orders = None
+
+
+
+    if request.method == "POST":
+
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        orderdetails_id = request.POST.get("order_id")
+        reason = request.POST.get("reason")
+        details = request.POST.get("details")
+
+        proof = request.FILES.get("proof")
+
+        order = Order.objects.filter(id=orderdetails_id).first()
+
+        user = request.user if request.user.is_authenticated else None
+
+
+    
+        if not request.user.is_authenticated:
+
+            try:
+                order = Order.objects.get(id=orderdetails_id, email=email)
+            except Order.DoesNotExist:
+                messages.error(request, "No order found with the provided email and order ID.")
+                return redirect("trackorder")
+
+
+            
+
+        ReplacementRequest.objects.create(
+            User=user,
+            order=order,
+            name=name,
+            email=email,
+            phone=phone,
+            orderdetails_id=orderdetails_id,
+            reason=reason,
+            details=details,
+            proof=proof
+        )
+
+        thread = threading.Thread(
+            target=send_replacement_email,
+            args=(name, email, phone, orderdetails_id, reason, details)
+        )
+        thread.start()
+        messages.success(request, "Your replacement request has been submitted successfully.")
+        return redirect("trackorder")
+
+
+    if request.method == "GET" and request.GET.get("trackmail"):
+        email = request.GET.get("trackmail")
+        orders = Order.objects.filter(email=email).order_by("-created_at")
+
+    elif request.user.is_authenticated:
+        orders = Order.objects.filter(user=request.user).order_by("-created_at")
+
+    return render(request, "trackorder.html", {"orders": orders , "order_count": orders.count() if orders else 0})
 
 
 
@@ -403,6 +547,12 @@ def add_to_cart(request):
 
     print(f"Requested quantity: {quantity} for product {product.title}")
 
+    if quantity<1:
+        return JsonResponse({
+        'status': 'failed',
+    })
+
+
 
    
     cart = get_or_create_cart(request)
@@ -436,6 +586,8 @@ def update_cart_quantity(request):
     print("Update cart quantity request received")
     product_id = request.POST.get('product_id')
     quantity = int(request.POST.get('quantity'))
+
+
 
     try:
         cart = get_or_create_cart(request)
@@ -565,9 +717,11 @@ def search(request):
 
 
 
+from django.db import transaction
 
 
 import traceback
+@transaction.atomic
 def place_order(request):
 
     cart = get_or_create_cart(request)
@@ -638,7 +792,7 @@ def place_order(request):
 
         print("===========================================Initiating Razorpay payment for order:", order.id, "with amount:", total)
 
-        # Razorpay order create
+        
 
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
@@ -724,10 +878,11 @@ def place_order(request):
 
 
 
-from django.db import transaction
 
 @transaction.atomic
 def payment_success(request):
+
+
 
     data = json.loads(request.body)
 
@@ -739,6 +894,8 @@ def payment_success(request):
         auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
     )
 
+
+
     try:
 
         client.utility.verify_payment_signature({
@@ -747,11 +904,21 @@ def payment_success(request):
             'razorpay_signature': razorpay_signature
         })
 
+
+
+
     except:
 
         return JsonResponse({"status": "payment_failed"})
 
+
     order = Order.objects.get(razorpay_order_id=razorpay_order_id)
+    if not order:
+        return JsonResponse({"status": "order_not_found"})
+
+
+    if order.payment_status == "paid":
+        return JsonResponse({"status": "success"})
 
     order.payment_status = "paid"
     order.razorpay_payment_id = razorpay_payment_id
@@ -770,8 +937,35 @@ def payment_success(request):
     cart = get_or_create_cart(request)
     cart.cartitem_set.all().delete()
 
+
+
+
+    order_items = ""
+    for item in order.items.all():
+        order_items += f"- {item.product.title} (Qty: {item.quantity})\n"
+
+
+
+
+    thread = threading.Thread(
+        target=send_order_email,
+        args=(order,)
+    )
+    thread.start()
+    
+
+
+    thread_owner = threading.Thread(
+        target=send_owner_order_email,
+        args=(order,)
+    )
+    thread_owner.start()
+
     return JsonResponse({"status":"success"})
 
 def order_success(request):
+
+
+
 
     return render(request,"order_success.html")

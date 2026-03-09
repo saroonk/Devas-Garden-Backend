@@ -166,3 +166,45 @@
 
 
 
+
+
+
+
+
+
+
+
+
+    .track-order-section{
+    background:#f8faf9;
+    font-family: "Inter", sans-serif !important;
+}
+
+.track-card{
+    border-radius:12px;
+}
+
+.track-title{
+    font-weight:600;
+    color:#2e7d32;
+}
+
+.track-input-group input{
+    height:48px;
+    border-radius:8px 0 0 8px;
+}
+
+.btn-tracks{
+    background:#2e7d32;
+    color:white;
+    border:none;
+    padding:0 22px;
+    font-weight:500;
+    border-radius:0 8px 8px 0;
+    transition:0.3s;
+}
+
+.btn-tracks:hover{
+    background:#1b5e20;
+    color:white;
+}
